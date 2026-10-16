@@ -81,7 +81,7 @@ cols[0].metric("2026H1 营业收入", f"{current['revenue']/1e8:,.2f} 亿元", f
 cols[1].metric("归母净利润", f"{current['profit_parent']/1e8:,.2f} 亿元", f"{m['profit_growth']:+.2f}% 同比", delta_color="off")
 cols[2].metric("经营现金流净额", f"{current['operating_cashflow']/1e8:,.2f} 亿元", f"{m['cashflow_growth']:+.2f}% 同比", delta_color="off")
 cols[3].metric("10月15日历史收盘价", f"{market.close.iloc[-1]:,.2f} 元", "S3 · 不复权冻结快照", delta_color="off")
-st.caption("以上字段来源 S1 · 2026年半年度报告第二节七（未经审计）；金额由元换算为亿元，均为历史财务事实。")
+st.caption("财务字段来源 S1 · 2026年半年度报告第二节七（未经审计），金额由元换算为亿元；历史收盘价来源 S3 · 腾讯证券冻结快照。")
 
 st.markdown("### 01 / 带着问题进入")
 examples = ["利润下降，现金流为什么大增？", "调价能改善业绩吗？", "现在估值便宜吗？"]
