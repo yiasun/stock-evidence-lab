@@ -112,7 +112,7 @@ if st.button("生成证据诊断", type="primary", width='stretch',key="diagnose
     if not question.strip() or not selected:
         st.error("请输入研究问题，并至少选择一个诊断维度。")
     else:
-        with st.spinner("核对证据与研究维度…"):
+        with st.spinner("核对证据与研究维度…免费模型可能需要约一分钟，请勿重复提交。" if enabled and ai_config["provider"] == "zhipu" else "核对证据与研究维度…"):
             scoped_evidence = [c for c in evidence if c["dimension"] in selected]
             st.session_state.nav = guarded_rank_evidence(question, scoped_evidence, ai_config["api_key"],
                 ai_config["model"], enabled,include_analysis=True,provider=ai_config["provider"])
@@ -125,7 +125,7 @@ if nav:
     if nav.get("request_source") == "cache":
         st.caption("复用最近5分钟内相同问题、证据与模型的成功AI结果，本次未重复调用API。")
     elif nav.get("request_source") == "api":
-        st.caption("请求记录：本次向智谱API发起1次请求；不自动重试。")
+        st.caption(f"请求记录：本次向智谱API发起1次请求，耗时{nav.get('elapsed_seconds',0):g}秒；不自动重试。")
     elif nav.get("request_source") == "gate":
         st.caption("请求记录：本次由并发/冷却保护拦截，未向API发起新请求。")
     if nav["mode"] == "规则回退":
