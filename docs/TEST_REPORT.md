@@ -67,3 +67,5 @@ Cloud已在Python 3.11部署成功：[在线产品](https://stock-evidence-lab-y
 2026-10-16，本地完整自动化43/43通过。新增验证：智谱独立密钥、不借用OpenAI密钥、固定免费模型并拒绝FlashX、JSON请求参数和关闭深度思考、无附加工具、重定向不转发密钥、智谱业务错误分类及脱敏、非法引用/数字/交易建议/冒充事实失败回退，以及AppTest模拟成功解读与引用钻取渲染。模型成功路径使用模拟响应，不等于在线模型验收。
 
 此前真实OpenAI调用已确认HTTP 429 / credit_balance_exhausted。智谱API尚未配置密钥；当前只验收集成代码与规则页面，不宣称真实GLM解读已通过。
+
+发布提交70e2783：[GitHub Actions](https://github.com/yiasun/stock-evidence-lab/actions/runs/38884497683)在Linux / Python 3.11通过全部检查。公网刷新后可见新加的服务商/模型状态（Secrets未切换，仍为OpenAI），点击“生成证据诊断”显示规则模式、E1–E5及研究归纳；页面无异常。智谱真实调用仍待ZHIPU_API_KEY配置，不把上述规则实测当作GLM成功验收。
