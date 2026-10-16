@@ -136,6 +136,8 @@ if nav:
         st.caption(f"诊断代码：{nav['error_code']}" + (f" · HTTP {nav['http_status']}" if nav.get("http_status") else ""))
         if nav.get("provider_code"):
             st.caption("官方错误码：" + nav["provider_code"])
+        if nav.get("output_reason"):
+            st.caption("输出校验项：" + nav["output_reason"])
     else:
         st.success(f"{nav['mode']} · {nav['notice']}")
     st.caption("优先核对：" + " → ".join(nav["ids"]) + "。下方保留相反及缺失证据。")
@@ -220,7 +222,7 @@ with tabs[0]:
         report["ai_request"] = {k:nav[k] for k in ["request_source","attempts","elapsed_seconds","fallback_from","fallback_reason"] if k in nav}
         report["ai_interpretations"] = nav.get("interpretations",[])
         report["ai_research_questions"] = nav.get("research_questions",[])
-        report["api_diagnostic"] = {k:nav[k] for k in ["error_code","http_status","provider_code"] if k in nav}
+        report["api_diagnostic"] = {k:nav[k] for k in ["error_code","http_status","provider_code","output_reason"] if k in nav}
     st.download_button("导出本次研究记录（JSON）", json.dumps(report, ensure_ascii=False, indent=2),
                        "stock-evidence-research.json", "application/json")
 

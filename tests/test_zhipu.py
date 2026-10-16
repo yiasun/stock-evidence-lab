@@ -90,6 +90,12 @@ class ZhipuTests(unittest.TestCase):
         self.assertEqual(result["error_code"],"network")
         self.assertEqual(call.call_count,1)
 
+    def test_output_diagnostics_never_echo_arbitrary_exception_text(self):
+        with patch("ai_layer._validated_analysis",side_effect=ValueError("secret-do-not-echo")):
+            result=self.run_analysis(analysis())
+        self.assertEqual(result["output_reason"],"invalid_json_or_shape")
+        self.assertNotIn("secret-do-not-echo",json.dumps(result))
+
     def test_page_cited_analysis_and_missing_zhipu_key(self):
         at=AppTest.from_file(str(Path(__file__).resolve().parents[1]/"app.py"),default_timeout=30)
         at.secrets["AI_PROVIDER"]="zhipu"

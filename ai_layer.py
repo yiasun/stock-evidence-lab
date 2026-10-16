@@ -7,6 +7,16 @@ from diagnosis import select_dimensions
 from request_gate import SHARED_GATE, request_identity
 
 FREE_ZHIPU_MODELS = ("glm-4.7-flash", "glm-4-flash-250414")
+OUTPUT_REASONS = {
+    "分析文本长度或类型无效":"text_length",
+    "分析包含额外数字或外部标记":"extra_numbers_or_markup",
+    "分析越过研究边界":"trade_advice",
+    "分析引用不合法":"unknown_citation",
+    "分析段落数无效":"paragraph_count",
+    "模型分析不能标记为公司事实":"inference_label",
+    "分析缺少推断边界":"missing_uncertainty",
+    "非法证据引用":"unknown_citation",
+}
 
 PROVIDERS = {
     "openai": {"label":"OpenAI", "endpoint":"https://api.openai.com/v1/chat/completions",
@@ -161,6 +171,10 @@ def rank_evidence(question, evidence, api_key="", model="gpt-4.1-mini", enabled=
             payload["thinking"] = {"type":"disabled"}
         payload["temperature"] = 0.1
         payload["messages"][0]["content"] += "严格按以下JSON Schema返回对象：" + json.dumps(_response_schema(evidence,include_analysis)["json_schema"]["schema"],ensure_ascii=False)
+        if include_analysis:
+            example_id=evidence[0]["id"]
+            example={"evidence_ids":[example_id],"interpretations":[{"kind":"推断","text":"现有证据尚不足以说明原因，需要沿原始披露继续核对。","evidence_ids":[example_id]}],"research_questions":[{"question":"还需核对哪些原始披露才能判断原因？","evidence_ids":[example_id]}]}
+            payload["messages"][0]["content"] += "字段形状示例如下，仅示范结构，不要照抄解读内容：" + json.dumps(example,ensure_ascii=False) + "正文只写定性中文，不要写任何阿拉伯数字、证据编号、方括号或网址。"
     try:
         response = requests.post(PROVIDERS[provider]["endpoint"], json=payload,
             headers={"Authorization": f"Bearer {api_key}"}, timeout=(5, 90 if provider == "zhipu" else 45),allow_redirects=False)
@@ -171,7 +185,7 @@ def rank_evidence(question, evidence, api_key="", model="gpt-4.1-mini", enabled=
         if choice["message"].get("refusal") or choice.get("finish_reason") == "content_filter":
             return _failure(fallback,"refusal")
         if choice.get("finish_reason") == "length":
-            return _failure(fallback,"output")
+            return {**_failure(fallback,"output"),"output_reason":"truncated"}
         raw = json.loads(choice["message"]["content"])
         ids = raw["evidence_ids"]
         allowed = {c["id"] for c in evidence}
@@ -188,8 +202,12 @@ def rank_evidence(question, evidence, api_key="", model="gpt-4.1-mini", enabled=
         return _failure(fallback,"timeout")
     except requests.RequestException:
         return _failure(fallback,"network")
-    except (ValueError, KeyError, IndexError, TypeError, AttributeError):
-        return _failure(fallback,"output")
+    except (ValueError, KeyError, IndexError, TypeError, AttributeError) as exc:
+        result=_failure(fallback,"output")
+        # The only surfaced details are fixed codes, never the raw response or
+        # arbitrary exception strings (which can contain provider data).
+        result["output_reason"]=OUTPUT_REASONS.get(str(exc),"invalid_json_or_shape")
+        return result
 
 
 def guarded_rank_evidence(question, evidence, api_key="", model="gpt-4.1-mini", enabled=False, include_analysis=False, provider="openai", gate=None):
