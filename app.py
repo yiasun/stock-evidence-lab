@@ -114,7 +114,12 @@ if nav and st.session_state.get("nav_context") != (question,tuple(selected),enab
     st.info("问题、维度或运行模式已改变，请重新生成证据导航。下方仍可浏览全部证据。")
     nav = None
 if nav:
-    st.success(f"{nav['mode']} · {nav['notice']}")
+    if nav["mode"] == "规则回退":
+        st.warning(f"{nav['mode']} · {nav['notice']}")
+        st.info(nav["action"])
+        st.caption(f"诊断代码：{nav['error_code']}" + (f" · HTTP {nav['http_status']}" if nav.get("http_status") else ""))
+    else:
+        st.success(f"{nav['mode']} · {nav['notice']}")
     st.caption("优先核对：" + " → ".join(nav["ids"]) + "。下方保留相反及缺失证据。")
 
 tabs = st.tabs(["多维诊断", "证据账本", "行情与估值", "同行对比", "研究清单", "行情核验沙盒", "研究边界"])
