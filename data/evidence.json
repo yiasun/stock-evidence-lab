@@ -1,0 +1,31 @@
+{
+  "company": "贵州茅台", "ticker": "600519.SH", "company_type": "白酒消费品（含财务公司）",
+  "verified_at": "2026-10-16T07:42:00Z",
+  "financial_source": {
+    "id": "S1", "title": "贵州茅台2026年半年度报告（未经审计）",
+    "url": "https://money.finance.sina.com.cn/corp/view/vCB_AllBulletinDetail.php?id=12496833&stockid=600519",
+    "original_url": "https://static.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-08-15/600519_20260815_UXBN.pdf",
+    "disclosed_at": "2026-08-15", "period": "2026-01-01 / 2026-06-30",
+    "locator": "第二节 七 主要会计数据；第三节 财务报表相关科目变动分析",
+    "verification": "已核对新浪公告全文转载字段；上交所PDF返回验证页，尚未逐页交叉核验。保留原始链接。",
+    "unit": "人民币元", "scope": "合并口径；归母净利润单列，营业收入不含利息收入"
+  },
+  "financials": [
+    {"period":"2025H1", "end":"2025-06-30", "revenue":89389354416.84, "profit_parent":45402962298.10, "operating_cashflow":13119061031.33, "cost":7777491083.93},
+    {"period":"2026H1", "end":"2026-06-30", "revenue":90703260964.48, "profit_parent":44516880421.86, "operating_cashflow":70690750119.06, "cost":9473762565.88}
+  ],
+  "cashflow_explanation": "公司将经营现金流变动主要归因于财务子公司吸收成员单位存款增加及不可随时支取的同业存款减少。",
+  "event": {
+    "id":"S2", "title":"贵州茅台重大事项公告（临2026-028）",
+    "url":"https://epaper.cs.com.cn/zgzqb/html/2026-07/18/nw.D110000zgzqb_20260718_1-B052.htm",
+    "disclosed_at":"2026-07-18", "effective_at":"2026-07-18T00:00:00+08:00",
+    "locator":"中国证券报 B052版，公告正文价格调整段",
+    "retail_before":1539, "retail_after":1639, "contract_before":1269, "contract_after":1369,
+    "unit":"元/瓶", "scope":"飞天53%vol 500ml贵州茅台酒（2026）；i茅台零售价与销售合同价，非全产品提价"
+  },
+  "market": {
+    "verified":false, "file":"market_snapshot.csv", "unit":"原文件未提供成交量单位",
+    "reason":"继承的CSV没有来源、复权口径和成交量单位，隔离为待核验数据，不参与公司诊断或估值。"
+  },
+  "peers": {"verified":false, "reason":"没有同口径同期同行数据，不能得出行业排名、相对估值或市场份额结论。"}
+}
