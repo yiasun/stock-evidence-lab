@@ -237,6 +237,8 @@ with tabs[0]:
                        "stock-evidence-research.json", "application/json")
     st.download_button("导出可读研究笔记（Markdown）", to_markdown(report),
                        "stock-evidence-research.md", "text/markdown")
+    with st.expander("预览可读研究笔记"):
+        st.code(to_markdown(report),language="markdown")
 
 with tabs[1]:
     st.markdown("### 每一个数字都有来处")
