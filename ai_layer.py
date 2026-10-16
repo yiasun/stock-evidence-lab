@@ -6,6 +6,8 @@ import time
 from diagnosis import select_dimensions
 from request_gate import SHARED_GATE, request_identity
 
+FREE_ZHIPU_MODELS = ("glm-4.7-flash", "glm-4-flash-250414")
+
 PROVIDERS = {
     "openai": {"label":"OpenAI", "endpoint":"https://api.openai.com/v1/chat/completions",
                "key_name":"OPENAI_API_KEY", "model":"gpt-4.1-mini"},
@@ -27,11 +29,12 @@ def resolve_config(read_secret):
 ERRORS = {
     "authentication": ("API密钥认证未通过", "请在Streamlit Secrets更新所选服务商的有效密钥，确认没有多余空格且密钥未被撤销。"),
     "permission": ("API访问权限被拒绝", "请检查项目密钥的模型调用权限，以及API账户和部署地区的可用性。"),
-    "model": ("配置的模型不可访问", "请检查模型ID及当前账户的模型权限。智谱接入仅支持glm-4.7-flash，不会自动切换付费模型。"),
+    "model": ("配置的模型不可访问", "请检查模型ID及当前账户的模型权限。智谱接入仅使用代码白名单中的免费模型。"),
     "quota": ("API可用额度不足", "请到OpenAI API平台检查Billing中的可用额度及项目支出限制；ChatGPT订阅不能替代API额度。"),
     "rate_limit": ("API请求受到速率限制", "请稍后手动重试，并检查项目速率限制。程序不会连续自动重试。"),
     "request": ("API请求参数未被接受", "请核对模型对结构化输出的支持及项目配置。"),
     "server": ("API服务暂时不可用", "请稍后手动重试；当前保留本地证据，不生成AI结论。"),
+    "overloaded": ("智谱模型服务繁忙", "服务端当前访问量过大，请稍后手动重试。这不是账户余额耗尽的诊断。"),
     "timeout": ("API调用超时", "请稍后手动重试；本次未获得可验收结果。"),
     "network": ("部署端无法连接API服务", "请检查部署端到所选服务商官方API的连接。"),
     "configuration": ("AI服务商配置无效", "请将AI_PROVIDER设为zhipu或openai；智谱模型固定为glm-4.7-flash。"),
@@ -59,6 +62,7 @@ def _http_failure(ids, response, provider="openai"):
     # response bodies, or the API key (401 responses can echo part of it).
     if provider == "zhipu" and code == "1211": category = "model"
     elif provider == "zhipu" and code == "1113": category = "quota"
+    elif provider == "zhipu" and code == "1305": category = "overloaded"
     elif provider == "zhipu" and code == "1301": category = "refusal"
     elif status == 401: category = "authentication"
     elif status == 403: category = "permission"
@@ -128,7 +132,7 @@ def _response_schema(evidence, include_analysis):
 def rank_evidence(question, evidence, api_key="", model="gpt-4.1-mini", enabled=False, include_analysis=False, provider="openai"):
     dimensions = select_dimensions(question)
     fallback = [c["id"] for c in evidence if c["dimension"] in dimensions]
-    if provider not in PROVIDERS or (provider == "zhipu" and model != "glm-4.7-flash"):
+    if provider not in PROVIDERS or (provider == "zhipu" and model not in FREE_ZHIPU_MODELS):
         return _failure(fallback,"configuration")
     api_key = api_key.strip() if isinstance(api_key,str) else ""
     if not enabled or not api_key:
@@ -153,7 +157,8 @@ def rank_evidence(question, evidence, api_key="", model="gpt-4.1-mini", enabled=
     if provider == "zhipu":
         payload["response_format"] = {"type":"json_object"}
         payload["max_tokens"] = payload.pop("max_completion_tokens")
-        payload["thinking"] = {"type":"disabled"}
+        if model == "glm-4.7-flash":
+            payload["thinking"] = {"type":"disabled"}
         payload["temperature"] = 0.1
         payload["messages"][0]["content"] += "严格按以下JSON Schema返回对象：" + json.dumps(_response_schema(evidence,include_analysis)["json_schema"]["schema"],ensure_ascii=False)
     try:
@@ -197,6 +202,15 @@ def guarded_rank_evidence(question, evidence, api_key="", model="gpt-4.1-mini", 
     def invoke():
         started=time.monotonic()
         result=rank_evidence(*args)
+        result["attempts"]=1
+        result["model_used"]=model
+        # A definitive overload rejection means the first call was rejected.
+        # Only then make one sequential request to an official free backup.
+        # Do not fail over on timeouts (the first call might still be running),
+        # authentication, account rate limits or billing errors.
+        if result.get("error_code") == "overloaded":
+            result=rank_evidence(question,evidence,api_key,FREE_ZHIPU_MODELS[1],enabled,include_analysis,provider)
+            result.update(attempts=2,model_used=FREE_ZHIPU_MODELS[1],fallback_from=model,fallback_reason="1305")
         result["elapsed_seconds"]=round(time.monotonic()-started,1)
         return result
     return (gate or SHARED_GATE).run(account,request_id,invoke,lambda code:_failure(fallback,code))

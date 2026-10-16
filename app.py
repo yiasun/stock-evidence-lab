@@ -70,7 +70,7 @@ with st.sidebar:
         help="启用后，研究问题及公开证据卡会发送至下方所列服务商，生成带引用的定性解读。请勿输入个人持仓或隐私。")
     st.caption(f"AI服务：{ai_config['label']} · {ai_config['model']}")
     if ai_config["provider"] == "zhipu":
-        st.caption("智谱接入版 · 仅调用 GLM-4.7-Flash；无付费模型自动切换。")
+        st.caption("免费模型：GLM-4.7-Flash；仅在服务过载1305时顺序尝试免费备用GLM-4-Flash-250414。")
         st.caption("请求保护：单次处理 · 相同问题缓存5分钟 · 限流后冷却60秒。")
     if enabled and ai_config["provider"] not in PROVIDERS:
         st.warning("AI_PROVIDER配置无效，请设为zhipu或openai。")
@@ -125,9 +125,11 @@ if nav:
     if nav.get("request_source") == "cache":
         st.caption("复用最近5分钟内相同问题、证据与模型的成功AI结果，本次未重复调用API。")
     elif nav.get("request_source") == "api":
-        st.caption(f"请求记录：本次向智谱API发起1次请求，耗时{nav.get('elapsed_seconds',0):g}秒；不自动重试。")
+        st.caption(f"请求记录：本次向智谱API发起{nav.get('attempts',1)}次顺序请求，耗时{nav.get('elapsed_seconds',0):g}秒。")
     elif nav.get("request_source") == "gate":
         st.caption("请求记录：本次由并发/冷却保护拦截，未向API发起新请求。")
+    if nav.get("fallback_from"):
+        st.info(f"主模型服务过载（1305），本次尝试的免费备用模型：{nav['model_used']}。")
     if nav["mode"] == "规则回退":
         st.warning(f"{nav['mode']} · {nav['notice']}")
         st.info(nav["action"])
@@ -214,7 +216,8 @@ with tabs[0]:
               "sources": sources, "valuation_assumptions":data["valuation"],"research_tasks":selected_tasks(), "limitations": "冻结证据包；估值为有假设的历史试算；非实时诊断，不提供投资建议"}
     if nav:
         report["ai_provider"] = ai_config["provider"]
-        report["ai_model"] = ai_config["model"]
+        report["ai_model"] = nav.get("model_used",ai_config["model"])
+        report["ai_request"] = {k:nav[k] for k in ["request_source","attempts","elapsed_seconds","fallback_from","fallback_reason"] if k in nav}
         report["ai_interpretations"] = nav.get("interpretations",[])
         report["ai_research_questions"] = nav.get("research_questions",[])
         report["api_diagnostic"] = {k:nav[k] for k in ["error_code","http_status","provider_code"] if k in nav}

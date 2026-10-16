@@ -25,6 +25,40 @@ class RequestGateTests(unittest.TestCase):
         response.json.return_value={"choices":[{"message":{"content":'{"evidence_ids":["E1"]}'}}]}
         return response
 
+    def error(self,code,status=429):
+        response=requests.Response()
+        response.status_code=status
+        response._content=json.dumps({"error":{"code":code}}).encode()
+        return response
+
+    def test_overload_uses_one_sequential_free_backup_and_caches_actual_model(self):
+        with patch("ai_layer.requests.post",side_effect=[self.error("1305"),self.success()]) as post:
+            result=self.run_request()
+            self.assertEqual(result["mode"],"LLM证据导航")
+            self.assertEqual(result["model_used"],"glm-4-flash-250414")
+            self.assertEqual(result["attempts"],2)
+            models=[call.kwargs["json"]["model"] for call in post.call_args_list]
+            self.assertEqual(models,["glm-4.7-flash","glm-4-flash-250414"])
+            self.assertNotIn("thinking",post.call_args.kwargs["json"])
+            cached=self.run_request()
+            self.assertEqual(cached["request_source"],"cache")
+            self.assertEqual(cached["model_used"],result["model_used"])
+            self.assertEqual(post.call_count,2)
+
+    def test_backup_overload_stops_at_two_requests_then_cools_down(self):
+        with patch("ai_layer.requests.post",return_value=self.error("1305")) as post:
+            self.assertEqual(self.run_request()["error_code"],"overloaded")
+            self.assertEqual(self.run_request()["request_source"],"gate")
+            self.assertEqual(post.call_count,2)
+
+    def test_account_errors_never_trigger_backup(self):
+        for code,status in [("1302",429),("1113",429),("1000",401)]:
+            self.gate=RequestGate(clock=lambda:self.now)
+            with patch("ai_layer.requests.post",return_value=self.error(code,status)) as post:
+                result=self.run_request()
+                self.assertEqual(post.call_count,1)
+                self.assertNotIn("fallback_from",result)
+
     def test_duplicate_success_uses_cache_with_correct_invalidation(self):
         with patch("ai_layer.requests.post",return_value=self.success()) as post:
             first=self.run_request()

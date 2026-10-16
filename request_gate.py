@@ -46,7 +46,7 @@ class RequestGate:
                 result["ids"]=fallback(result["error_code"])["ids"]
                 seconds=max(1,math.ceil(until-now))
                 result.update(request_source="gate",retry_after_seconds=seconds,
-                              action=f"本应用正在限流冷却，请至少等待{seconds}秒后手动重试。期间不会向API发起请求；持续限流需检查智谱控制台的模型速率上限。")
+                              action=f"本应用正在请求冷却，请至少等待{seconds}秒后手动重试。期间不会向API发起请求；持续失败需检查智谱模型速率上限及服务状态。")
                 return result
             self.busy.add(account)
         try:
@@ -57,7 +57,7 @@ class RequestGate:
                     self.cache[(account,request_id)]=(self.clock()+self.cache_ttl,copy.deepcopy(result))
                     while len(self.cache)>64:
                         self.cache.popitem(last=False)
-                elif result.get("error_code") in ("rate_limit","timeout"):
+                elif result.get("error_code") in ("rate_limit","overloaded","timeout"):
                     result["retry_after_seconds"]=self.cooldown
                     result["action"] += f" 本应用已启用{self.cooldown}秒冷却，冷却期间重复生成不会再次请求API。"
                     self.blocked[account]=(self.clock()+self.cooldown,copy.deepcopy(result))
