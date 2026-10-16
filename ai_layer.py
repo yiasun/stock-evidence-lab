@@ -25,9 +25,11 @@ def _failure(ids, code, status=None):
 def _http_failure(ids, response):
     status = response.status_code if response is not None else None
     code = None
+    error_type = None
     try:
         body = response.json() if response is not None else {}
         code = body.get("error",{}).get("code")
+        error_type = body.get("error",{}).get("type")
     except (ValueError,AttributeError,TypeError):
         pass
     # Only fixed labels leave this boundary; never render exception strings,
@@ -35,11 +37,15 @@ def _http_failure(ids, response):
     if status == 401: category = "authentication"
     elif status == 403: category = "permission"
     elif status == 404 or code == "model_not_found": category = "model"
-    elif status == 429 and code in ("insufficient_quota","billing_hard_limit_reached"): category = "quota"
+    elif status == 429 and (code in ("insufficient_quota","billing_hard_limit_reached","credit_balance_exhausted","project_spend_limit_exceeded","organization_spend_limit_exceeded","organization_usage_limit_exceeded") or error_type == "insufficient_quota"): category = "quota"
     elif status == 429: category = "rate_limit"
     elif status and status >= 500: category = "server"
     else: category = "request"
-    return _failure(ids,category,status)
+    result = _failure(ids,category,status)
+    safe_codes = {"invalid_api_key","permission_denied","model_not_found","insufficient_quota","billing_hard_limit_reached","credit_balance_exhausted","project_spend_limit_exceeded","organization_spend_limit_exceeded","organization_usage_limit_exceeded","rate_limit_exceeded","slow_down"}
+    if code in safe_codes:
+        result["provider_code"] = code
+    return result
 
 def rank_evidence(question, evidence, api_key="", model="gpt-4.1-mini", enabled=False):
     dimensions = select_dimensions(question)

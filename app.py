@@ -118,6 +118,8 @@ if nav:
         st.warning(f"{nav['mode']} · {nav['notice']}")
         st.info(nav["action"])
         st.caption(f"诊断代码：{nav['error_code']}" + (f" · HTTP {nav['http_status']}" if nav.get("http_status") else ""))
+        if nav.get("provider_code"):
+            st.caption("官方错误码：" + nav["provider_code"])
     else:
         st.success(f"{nav['mode']} · {nav['notice']}")
     st.caption("优先核对：" + " → ".join(nav["ids"]) + "。下方保留相反及缺失证据。")

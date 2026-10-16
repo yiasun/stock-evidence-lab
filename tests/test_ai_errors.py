@@ -27,6 +27,16 @@ class APIErrorsTests(unittest.TestCase):
             with patch("ai_layer.requests.post",side_effect=exc):
                 self.assertEqual(rank_evidence("利润",self.evidence,"dummy",enabled=True)["error_code"],expected)
 
+    def test_quota_codes_and_quota_type_are_not_transient_rate_limits(self):
+        for code in ["credit_balance_exhausted","project_spend_limit_exceeded","organization_spend_limit_exceeded","organization_usage_limit_exceeded",None]:
+            response=requests.Response()
+            response.status_code=429
+            response._content=json.dumps({"error":{"code":code,"type":"insufficient_quota","message":"secret"}}).encode()
+            with patch("ai_layer.requests.post",return_value=response):
+                result=rank_evidence("利润",self.evidence,"dummy",enabled=True)
+                self.assertEqual(result["error_code"],"quota")
+                self.assertNotIn("secret",json.dumps(result))
+
     def test_key_whitespace_is_removed_without_exposing_it(self):
         response=Mock()
         response.json.return_value={"choices":[{"message":{"content":'{"evidence_ids":["E1"]}'}}]}
