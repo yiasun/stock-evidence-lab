@@ -72,7 +72,7 @@ class RequestGate:
 SHARED_GATE=RequestGate()
 
 
-def request_identity(provider, model, api_key, question, evidence, include_analysis):
+def request_identity(provider, model, api_key, question, evidence, include_analysis, policy_version=""):
     account=hashlib.sha256((provider+":"+api_key.strip()).encode()).hexdigest()
-    payload=json.dumps([model,question,evidence,include_analysis],ensure_ascii=False,sort_keys=True)
+    payload=json.dumps([model,question,evidence,include_analysis,policy_version],ensure_ascii=False,sort_keys=True)
     return account,hashlib.sha256(payload.encode()).hexdigest()

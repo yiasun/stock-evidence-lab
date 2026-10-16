@@ -102,7 +102,7 @@ class ZhipuTests(unittest.TestCase):
         at.secrets["OPENAI_API_KEY"]="other-provider-key"
         at.secrets["ZHIPU_API_KEY"]=""
         at.run()
-        next(c for c in at.checkbox if c.label=="启用 LLM 证据导航").check().run()
+        next(c for c in at.checkbox if c.label=="启用 AI 证据解读").check().run()
         self.assertTrue(any("未配置服务端密钥" in w.value for w in at.warning))
         self.assertTrue(any("glm-4.7-flash" in c.value for c in at.caption))
         at.secrets["ZHIPU_API_KEY"]="dummy-zhipu"

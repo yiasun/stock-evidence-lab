@@ -16,6 +16,9 @@ OUTPUT_REASONS = {
     "模型分析不能标记为公司事实":"inference_label",
     "分析缺少推断边界":"missing_uncertainty",
     "非法证据引用":"unknown_citation",
+    "调价解读缺少事件及未知证据":"event_grounding",
+    "调价影响大小缺少期后证据":"event_effect_unknown",
+    "调价不能解释此前业绩":"event_timing",
 }
 
 PROVIDERS = {
@@ -115,15 +118,45 @@ def _validated_analysis(raw, evidence):
     if not isinstance(interpretations,list) or not 1 <= len(interpretations) <= 3 or not isinstance(questions,list) or not 1 <= len(questions) <= 3:
         raise ValueError("分析段落数无效")
     checked=[]
+    rejected=[]
+    last_error=None
     for item in interpretations:
-        if not isinstance(item,dict) or item.get("kind") != "推断":
-            raise ValueError("模型分析不能标记为公司事实")
-        text=_safe_analysis_text(item["text"],220)
-        if not any(marker in text for marker in ["可能","尚","需","不能","不宜","不代表","不足以","无法"]):
-            raise ValueError("分析缺少推断边界")
-        checked.append({"kind":"推断","text":text,"evidence_ids":refs(item["evidence_ids"])})
+        try:
+            if not isinstance(item,dict) or item.get("kind") != "推断":
+                raise ValueError("模型分析不能标记为公司事实")
+            text=_safe_analysis_text(item["text"],220)
+            if not any(marker in text for marker in ["可能","尚","需","不能","不宜","不代表","不足以","无法"]):
+                raise ValueError("分析缺少推断边界")
+            ids=refs(item["evidence_ids"])
+            _check_event_grounding(text,ids,allowed)
+            checked.append({"kind":"推断","text":text,"evidence_ids":ids})
+        except (ValueError,KeyError,TypeError) as exc:
+            rejected.append(OUTPUT_REASONS.get(str(exc),"invalid_json_or_shape"))
+            last_error=exc
+    if not checked:
+        raise last_error or ValueError("分析段落数无效")
     followups=[{"question":_safe_analysis_text(item["question"],160),"evidence_ids":refs(item["evidence_ids"])} for item in questions]
-    return checked,followups
+    return checked,followups,{"withheld_count":len(rejected),"reasons":rejected}
+
+
+def _check_event_grounding(text, ids, allowed):
+    """Narrow regression guard for this frozen dataset, not a fact-checker.
+
+    E6 is the post-half-year event; E7 explicitly lacks post-event evidence.
+    The known bad output used E4's prior cashflow to infer event impact size.
+    """
+    if not any(word in text for word in ["调价","提价","价格调整"]):
+        return
+    if not {"E6","E7"}.issubset(allowed) or not {"E6","E7"}.issubset(ids):
+        raise ValueError("调价解读缺少事件及未知证据")
+    for clause in re.split(r"[，,。；;！？!?]",text):
+        negated=any(word in clause for word in ["不能","无法","不足以","不代表","不宜","尚未"])
+        if negated:
+            continue
+        if re.search(r"(影响|作用|贡献).{0,8}(有限|显著|巨大|明显|较大|很小)",clause):
+            raise ValueError("调价影响大小缺少期后证据")
+        if any(word in clause for word in ["上半年","此前","半年报"]) and any(word in clause for word in ["导致","造成","解释了","带来"]):
+            raise ValueError("调价不能解释此前业绩")
 
 def _response_schema(evidence, include_analysis):
     id_schema={"type":"string","enum":[c["id"] for c in evidence]}
@@ -153,6 +186,7 @@ def rank_evidence(question, evidence, api_key="", model="gpt-4.1-mini", enabled=
     if include_analysis:
         system += "同时生成一至三段定性研究解读interpretations，以及一至三个继续验证的问题research_questions。每段必须引用清单中的证据ID。kind固定为推断，正文必须明确包含可能、尚、需、不能、不代表或不足以等推断边界。解释证据矛盾及替代解释，不把相关性当因果；缺失证据必须保留未知。正文不要复述任何数字、年份、倍数、金额或证据编号，所有引用ID单独放evidence_ids。不要生成公司新事实、行情预测或买卖建议；不要断言估值便宜昂贵。"
         system += "优先只写一至两段，每段不超过九十个汉字，后续问题一至两个。不要泛泛重复全部证据。明确区分已经披露的财务事实与尚未证实的原因；不能用原因证据不足去质疑已披露的利润升降事实。调价发生在半年期之后，不能反推解释此前业绩。"
+        system += "任何提及调价、提价或价格调整的解读段落，必须同时引用事件证据E6和未知证据E7；如果清单缺少它们，就不解读调价。没有期后数据，不能声称调价影响有限或显著，也不能用调价前现金流判断调价后影响大小。"
     else:
         system += "只返回evidence_ids数组，不计算数字，不生成财务解读。"
     payload = {
@@ -192,9 +226,9 @@ def rank_evidence(question, evidence, api_key="", model="gpt-4.1-mini", enabled=
         if not isinstance(ids, list) or not ids or len(ids) > len(evidence) or any(not isinstance(i, str) or i not in allowed for i in ids):
             raise ValueError("非法证据引用")
         if include_analysis:
-            interpretations,followups=_validated_analysis(raw,evidence)
+            interpretations,followups,checks=_validated_analysis(raw,evidence)
             return {"ids":list(dict.fromkeys(ids)),"mode":"LLM证据解读","notice":"已生成带引用的定性分析推断；财务数字仍由程序计算，请沿证据核对解读。",
-                    "interpretations":interpretations,"research_questions":followups}
+                    "interpretations":interpretations,"research_questions":followups,"analysis_checks":checks}
         return {"ids": list(dict.fromkeys(ids)), "mode": "LLM证据导航", "notice": "LLM只选择和排序证据；所有数字、表述及证据类型均来自本地核验层。"}
     except requests.HTTPError as exc:
         return _http_failure(fallback,exc.response,provider)
@@ -214,7 +248,7 @@ def guarded_rank_evidence(question, evidence, api_key="", model="gpt-4.1-mini", 
     args=(question,evidence,api_key,model,enabled,include_analysis,provider)
     if not enabled or not evidence or not isinstance(api_key,str) or not api_key.strip() or provider != "zhipu" or model != "glm-4.7-flash":
         return rank_evidence(*args)
-    account,request_id=request_identity(provider,model,api_key,question,evidence,include_analysis)
+    account,request_id=request_identity(provider,model,api_key,question,evidence,include_analysis,policy_version="3.0-event-boundary")
     dimensions=select_dimensions(question)
     fallback=[c["id"] for c in evidence if c["dimension"] in dimensions]
     def invoke():

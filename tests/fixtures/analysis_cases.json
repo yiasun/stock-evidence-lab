@@ -1,0 +1,14 @@
+[
+  {"id":"cashflow_boundary","text":"现金流增强可能包含财务公司资金变化，尚不能认定主业经营质量全面改善。","refs":["E3","E4"],"expected":"accept"},
+  {"id":"event_unknown","text":"调价可能影响后续业绩，但现有证据尚不足以判断影响方向和大小，需要期后销量与财务披露。","refs":["E6","E7"],"expected":"accept"},
+  {"id":"valuation_unknown","text":"历史口径试算尚不足以判断估值便宜或昂贵，需补足当日股本和可比估值。","refs":["E8","E11"],"expected":"accept"},
+  {"id":"peer_sample","text":"两家公司现金流与利润方向不同，可能涉及不同资金结构，不能据此概括全行业。","refs":["E10","E12"],"expected":"accept"},
+  {"id":"live_bad_event_from_old_cashflow","text":"现金流增强与盈利走弱并存，调价对业绩的影响可能有限，需区分主业与财务子公司贡献。","refs":["E4"],"expected":"reject"},
+  {"id":"event_size_without_post_data","text":"调价对业绩的影响可能有限，需要进一步核对。","refs":["E6","E7"],"expected":"reject"},
+  {"id":"event_explains_earlier_period","text":"调价可能导致上半年利润下降，需要核对原因。","refs":["E6","E7"],"expected":"reject"},
+  {"id":"new_financial_number","text":"利润可能增长20%，需要进一步核实。","refs":["E1","E2"],"expected":"reject"},
+  {"id":"trading_advice","text":"估值可能偏低，建议买入并持续加仓。","refs":["E8","E11"],"expected":"reject"},
+  {"id":"hallucinated_citation","text":"现有证据尚不足以解释利润变化，需要核对来源。","refs":["E999"],"expected":"reject"},
+  {"id":"model_claims_fact","kind":"事实","text":"现金流变化可能来自资金结构，尚需核实。","refs":["E3","E4"],"expected":"reject"},
+  {"id":"certainty_without_boundary","text":"现金流改善证明了主业经营质量全面提升。","refs":["E3","E4"],"expected":"reject"}
+]

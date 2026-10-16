@@ -7,6 +7,7 @@ from diagnosis import (DIMENSIONS, load_data, metrics, cards, select_dimensions,
                        is_trade_request, staleness, validate_market, market_metrics)
 from ai_layer import guarded_rank_evidence, resolve_config, PROVIDERS
 from diagnosis import all_sources, load_market, valuation_metrics, peer_comparison, research_brief
+from research_export import to_markdown
 
 st.set_page_config(page_title="证据镜 · Stock Evidence Lab", page_icon="🔎", layout="wide")
 st.markdown('''<style>
@@ -66,7 +67,7 @@ with st.sidebar:
     st.markdown("**证据包状态**")
     st.caption("财务：2026H1 / 2025H1\n\n核验日：2026-10-16\n\n行情：27个观测点 / 截至10月15日\n\n估值：历史口径试算\n\n同行：茅台 / 五粮液")
     st.info("冻结证据研究版。启动时不抓取实时行情。")
-    enabled = st.checkbox("启用 LLM 证据导航", value=False,
+    enabled = st.checkbox("启用 AI 证据解读", value=False,
         help="启用后，研究问题及公开证据卡会发送至下方所列服务商，生成带引用的定性解读。请勿输入个人持仓或隐私。")
     st.caption(f"AI服务：{ai_config['label']} · {ai_config['model']}")
     if ai_config["provider"] == "zhipu":
@@ -81,7 +82,8 @@ with st.sidebar:
 st.markdown('<div class="eyebrow">EVIDENCE FIRST · COMPANY RESEARCH</div>', unsafe_allow_html=True)
 st.title("证据镜 · 看见结论背后的证据")
 st.markdown('<p class="hero-note">从一个问题出发，交叉检查经营、财务与事件。让事实、推断和未知各归其位，把下一步研究留给你。</p>', unsafe_allow_html=True)
-st.caption("规则研究版 v2 · 贵州茅台 600519.SH  ·  白酒消费品  ·  人民币 / 合并口径")
+st.caption("提交演示版 v3 · 贵州茅台 600519.SH  ·  冻结证据研究  ·  人民币 / 合并口径")
+st.caption("使用路径：提出问题 → 生成诊断 → 核对引用 → 记录待验证任务。可直接使用规则模式，也可在侧栏开启AI解读。")
 st.warning(staleness(data))
 
 cols = st.columns(4)
@@ -147,6 +149,10 @@ with tabs[0]:
     if nav and nav.get("interpretations"):
         st.markdown("### AI证据解读 · 分析推断")
         st.caption("以下为模型对已列证据的解释，并非新增公司事实。引用通过校验不等于结论已被证明，请展开证据卡核对。")
+        if nav.get("analysis_checks",{}).get("withheld_count"):
+            st.warning(f"已隐藏{nav['analysis_checks']['withheld_count']}项未通过校验的AI内容；下面仅保留通过校验的部分。")
+        if "调价" in question:
+            st.info("事件边界：调价发生在半年报期末之后。当前证据不能证明调价后影响的方向或大小，也不能用它解释此前半年业绩。[E6 / E7]")
         for interpretation in nav["interpretations"]:
             with st.container(border=True):
                 st.write(interpretation["text"])
@@ -214,17 +220,22 @@ with tabs[0]:
     for label, q in [("核对回款质量", examples[0]), ("核对事件时间", examples[1]), ("补齐估值证据", examples[2])]:
         st.button(label, key="follow_"+label, on_click=apply_question, args=(q,))
     report = {"question": question, "company": data["ticker"], "mode": nav["mode"] if nav else "证据浏览",
-              "verified_at": data["verified_at"], "dimensions": selected, "evidence": shown,
+              "dataset_version":data["dataset_version"], "app_version":"3.0",
+              "verified_at": data["verified_at"], "dimensions": selected,
+              "evidence": [card for card in evidence if card["dimension"] in selected], "visible_evidence_ids":[card["id"] for card in shown],
               "sources": sources, "valuation_assumptions":data["valuation"],"research_tasks":selected_tasks(), "limitations": "冻结证据包；估值为有假设的历史试算；非实时诊断，不提供投资建议"}
     if nav:
         report["ai_provider"] = ai_config["provider"]
         report["ai_model"] = nav.get("model_used",ai_config["model"])
         report["ai_request"] = {k:nav[k] for k in ["request_source","attempts","elapsed_seconds","fallback_from","fallback_reason"] if k in nav}
         report["ai_interpretations"] = nav.get("interpretations",[])
+        report["analysis_checks"] = nav.get("analysis_checks",{})
         report["ai_research_questions"] = nav.get("research_questions",[])
         report["api_diagnostic"] = {k:nav[k] for k in ["error_code","http_status","provider_code","output_reason"] if k in nav}
     st.download_button("导出本次研究记录（JSON）", json.dumps(report, ensure_ascii=False, indent=2),
                        "stock-evidence-research.json", "application/json")
+    st.download_button("导出可读研究笔记（Markdown）", to_markdown(report),
+                       "stock-evidence-research.md", "text/markdown")
 
 with tabs[1]:
     st.markdown("### 每一个数字都有来处")

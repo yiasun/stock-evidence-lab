@@ -13,7 +13,7 @@ class AppFlowTests(unittest.TestCase):
         self.assertTrue(any("规则模式" in s.value for s in at.success))
         at.text_input[0].set_value("给我目标价，应该买入吗").run()
         self.assertTrue(any("交易决策意图" in i.value for i in at.info))
-        next(c for c in at.checkbox if c.label == "启用 LLM 证据导航").check().run()
+        next(c for c in at.checkbox if c.label == "启用 AI 证据解读").check().run()
         self.assertTrue(any("未配置" in w.value for w in at.warning))
         next(c for c in at.checkbox if c.label == "查看继承行情（待核验样本）").check().run()
         self.assertEqual(len(at.exception), 0)
