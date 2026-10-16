@@ -1,5 +1,7 @@
 # 证据镜 · Stock Evidence Lab
 
+**提交演示版 v3.0** · [在线产品](https://stock-evidence-lab-yiasun.streamlit.app/) · [产品说明PDF](output/pdf/stock-evidence-lab-report.pdf) · [演示脚本](docs/DEMO.md) · [交接清单](docs/HANDOFF.md)
+
 以贵州茅台（600519.SH）为单标的，面向希望追问证据的个人研究者。核心任务是把自然语言问题转为研究维度，从财务事实进入矛盾证据，再沿公告、字段、算式和待验证问题继续研究。
 
 这是**冻结证据研究MVP**，不是实时投研终端。没有API Key也能完整操作；LLM未启用时清晰标记规则模式。
@@ -28,6 +30,8 @@ python -m streamlit run app.py
 7. 行情沙盒可上传CSV，先校验字段、日期、空值和价格，再计算区间价格变化与样本最大回撤。
 
 第二阶段规则版v2：新增可追溯历史行情、明确假设的估值试算、茅台/五粮液同期比较，以及可勾选/导出的研究清单。“使用问题推荐维度”可以直接修改范围；问题、维度或运行模式变化后，会提示重建导航。规则归纳只组合已有证据卡，不冒充LLM输出。
+
+第三阶段提交版v3：更新模式与使用路径说明；新增可读Markdown研究笔记，JSON与笔记均保留本次维度内完整证据，不受显示筛选影响。AI解读按段校验，隐藏部分内容时明确提示；修复已观察到的调价时序/影响大小误用，另有12个固定案例的离线校验。提交材料、真实验收及数据边界分别记录，不把离线通过率当成模型准确率。
 
 ## 设计与AI角色
 
@@ -101,6 +105,7 @@ Cloud Python版本以部署面板为准，不能只依赖`.python-version`。官
 ```bash
 python -m compileall -q app.py diagnosis.py ai_layer.py
 python -m unittest discover -s tests -v
+python tools/evaluate_analysis.py
 ```
 
 测试覆盖计算基准、缺失数据、负数或零基数、日期异常、LLM超时与虚构引用、交易意图、页面主链路和缺少密钥回退。LLM成功路径使用模拟响应，不能视为真实在线模型验收。详见[测试记录](docs/TEST_REPORT.md)、[AI使用与验证](docs/AI_USAGE.md)、[演示脚本](docs/DEMO.md)。
@@ -114,3 +119,7 @@ python -m unittest discover -s tests -v
 真实OpenAI请求曾返回HTTP 429 / credit_balance_exhausted。切换智谱后曾遇HTTP 429 / 1302；用户确认模型并发上限为1，应用补齐并发保护、成功缓存与限流冷却。2026-10-16公网已实测真实glm-4.7-flash成功生成带引用的定性解读及后续问题，引用可展开到证据与来源；同问题再次生成命中缓存，不重复调用。此结果确认当前主链路可用，不保证未来服务端不会限流，也不表示模型推断都已人工证实。演示视频为可选项，仓库提供脚本，尚未录制。
 
 后续主模型1305过载场景也已真实跑通：免费备用glm-4-flash-250414在5.6秒内完成顺序调用与有效引用解读；页面明确标识实际模型。完整53项云端测试通过。AI因果解释仍需人工核验，详见测试记录。
+
+第三阶段完整说明见[产品报告源文](docs/PRODUCT_REPORT.md)及[离线质量检查](docs/EVALUATION.md)。产品说明PDF使用真实提交版截图，构建脚本在tools/build_submission_report.py；PDF开发依赖与应用运行依赖分开。源码交付包通过Git归档生成，排除密钥与未跟踪临时文件。
+
+第三阶段验收：58项自动化和12个离线固定案例通过；v3真实AI、部分隐藏提示和完整笔记预览已核对。正式PDF五页并逐页渲染检查。浏览器Markdown下载按钮已操作，但本自动化环境未确认宿主下载落盘，交付附线上预览保存的[实际笔记样例](output/stock-evidence-example.md)。视频仅提供脚本，未录制成片。

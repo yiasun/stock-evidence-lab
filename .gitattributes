@@ -1,2 +1,4 @@
 *.csv text eol=lf
 data/raw/*.json -text
+*.pdf binary
+*.png binary

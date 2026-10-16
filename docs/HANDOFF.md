@@ -29,6 +29,8 @@ python tools/evaluate_analysis.py --output artifacts/analysis-eval.json
 
 PDF构建需开发依赖reportlab、pypdf和可嵌入的中文TrueType字体，不加入应用运行依赖。运行tools/build_submission_report.py时通过--font指定字体；截图在docs/images/submission-ui.png。
 
+提交文件后，运行python tools/package_submission.py生成output/stock-evidence-lab-v3.zip及包含Git版本、SHA-256的交付清单。打包器校验必需文件、PDF头及私有路径。output/stock-evidence-example.md来自本次线上真实笔记预览，可用于阅读输出格式；不是新的股票建议。
+
 ## 交付边界
 
 冻结证据包、不保证实时性；估值为有时点假设的试算；两家公司样本不代表全行业。AI带引用仍可能存在因果错误，固定规则不能覆盖所有措辞。任务勾选不升级证据可信度。免费接口可能拥堵，页面会说明实际模型及回退。

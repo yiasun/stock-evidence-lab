@@ -9,4 +9,5 @@ __pycache__/
 report.pdf
 artifacts/
 output/*.zip
+output/submission-manifest.json
 tmp/
