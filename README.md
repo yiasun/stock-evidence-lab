@@ -112,3 +112,5 @@ python -m unittest discover -s tests -v
 在线产品：[证据镜 · Stock Evidence Lab](https://stock-evidence-lab-yiasun.streamlit.app/)。已部署Streamlit Community Cloud，Python 3.11。自动化与公网实测记录见测试报告。
 
 真实OpenAI请求曾返回HTTP 429 / credit_balance_exhausted。切换智谱后曾遇HTTP 429 / 1302；用户确认模型并发上限为1，应用补齐并发保护、成功缓存与限流冷却。2026-10-16公网已实测真实glm-4.7-flash成功生成带引用的定性解读及后续问题，引用可展开到证据与来源；同问题再次生成命中缓存，不重复调用。此结果确认当前主链路可用，不保证未来服务端不会限流，也不表示模型推断都已人工证实。演示视频为可选项，仓库提供脚本，尚未录制。
+
+后续主模型1305过载场景也已真实跑通：免费备用glm-4-flash-250414在5.6秒内完成顺序调用与有效引用解读；页面明确标识实际模型。完整53项云端测试通过。AI因果解释仍需人工核验，详见测试记录。
