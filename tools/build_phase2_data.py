@@ -67,7 +67,7 @@ if not rows or rows[-1][0] != "2026-10-15":
     raise ValueError("Expected market cutoff not present")
 market = pd.DataFrame([dict(date=r[0], open=float(r[1]),close=float(r[2]),high=float(r[3]),low=float(r[4]),volume=float(r[5])*100,amount=float(r[8])*10000) for r in rows])
 dest = ROOT / "data" / "market_verified.csv"
-market.to_csv(dest,index=False)
+market.to_csv(dest,index=False,lineterminator="\n")
 raw_dest = ROOT / "data" / "raw" / "maotai_qq_20261016.json"
 raw_dest.parent.mkdir(exist_ok=True)
 shutil.copyfile(raw_path, raw_dest)
@@ -77,11 +77,11 @@ data["market"] = {
     "reason":"已保存腾讯证券公开历史日线响应并核对字段与范围；单一公开来源，不保证交易日连续或等同交易所最终口径。",
     "source":{"id":"S3", "title":"腾讯证券 · 贵州茅台历史日线冻结快照", "url":"https://gu.qq.com/sh600519/gp",
         "endpoint":"https://proxy.finance.qq.com/ifzqgtimg/appstock/app/newfqkline/get?param=sh600519,day,2026-09-01,2026-10-15,60,",
-        "disclosed_at":"2026-10-15", "fetched_at":stamp, "period":"2026-09-01 / 2026-10-15",
+        "disclosed_at":"2026-10-15", "fetched_at":datetime.fromtimestamp(raw_path.stat().st_mtime,timezone.utc).isoformat(timespec="seconds"), "period":"2026-09-01 / 2026-10-15",
         "locator":"data.sh600519.day；本地严格筛选date范围，忽略返回的实时qt字段",
         "unit":"价格元 / 成交量股 / 成交额元", "scope":"非复权日线；上交所主板成交量由手×100换算为股，成交额由万元×10000换算为元",
         "mapping_reference":"https://github.com/akfamily/akshare/blob/main/akshare/stock_feature/stock_hist_tx.py",
-        "sha256":hashlib.sha256(raw_path.read_bytes()).hexdigest(), "csv_sha256":hashlib.sha256(dest.read_bytes()).hexdigest(), "raw_file":"raw/maotai_qq_20261016.json"}
+        "sha256":hashlib.sha256(raw_path.read_bytes()).hexdigest(), "csv_sha256":hashlib.sha256(dest.read_bytes().replace(b"\r\n",b"\n")).hexdigest(), "csv_hash_canonicalization":"LF line endings", "raw_file":"raw/maotai_qq_20261016.json"}
 }
 data["valuation"] = {
     "as_of":"2026-10-15", "price":float(market.iloc[-1].close), "shares":1250081601, "shares_as_of":"2026-06-30",

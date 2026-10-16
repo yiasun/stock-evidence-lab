@@ -51,6 +51,15 @@ class PhaseTwoEvidenceTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,"哈希"):
                 load_market(self.data,root=root)
 
+    def test_market_hash_survives_windows_linux_line_ending_conversion(self):
+        original = (ROOT/"data"/self.data["market"]["file"]).read_bytes().replace(b"\r\n",b"\n")
+        for newline in [b"\n",b"\r\n"]:
+            with tempfile.TemporaryDirectory() as folder:
+                root=Path(folder)
+                (root/"data").mkdir()
+                (root/"data"/self.data["market"]["file"]).write_bytes(original.replace(b"\n",newline))
+                self.assertEqual(len(load_market(self.data,root=root)),27)
+
     def test_inconsistent_valuation_and_periods_fail_closed(self):
         for section,key,value in [("valuation","equity_parent",1),("valuation","as_of","2026-10-16"),("valuation","ttm_end","2026-09-30"),("annual","period","2024FY")]:
             bad = copy.deepcopy(self.data)

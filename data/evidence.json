@@ -2,7 +2,7 @@
   "company": "贵州茅台",
   "ticker": "600519.SH",
   "company_type": "白酒消费品（含财务公司）",
-  "verified_at": "2026-10-16T09:04:18+00:00",
+  "verified_at": "2026-10-16T09:11:27+00:00",
   "financial_source": {
     "id": "S1",
     "title": "贵州茅台2026年半年度报告（未经审计）",
@@ -69,14 +69,15 @@
       "url": "https://gu.qq.com/sh600519/gp",
       "endpoint": "https://proxy.finance.qq.com/ifzqgtimg/appstock/app/newfqkline/get?param=sh600519,day,2026-09-01,2026-10-15,60,",
       "disclosed_at": "2026-10-15",
-      "fetched_at": "2026-10-16T09:04:18+00:00",
+      "fetched_at": "2026-10-16T09:02:02+00:00",
       "period": "2026-09-01 / 2026-10-15",
       "locator": "data.sh600519.day；本地严格筛选date范围，忽略返回的实时qt字段",
       "unit": "价格元 / 成交量股 / 成交额元",
       "scope": "非复权日线；上交所主板成交量由手×100换算为股，成交额由万元×10000换算为元",
       "mapping_reference": "https://github.com/akfamily/akshare/blob/main/akshare/stock_feature/stock_hist_tx.py",
       "sha256": "d8c4b6071b18d08f1ff238f9f3adb7b1f42f94cd60e903d6359c792165ef6716",
-      "csv_sha256": "42d745d2a0dfd25535992f2ff9a86c4153697bf4eda48aa022f3488c47880622",
+      "csv_sha256": "c80b76f98ea3fafe30c16d7aa5bc30cfb7e1ee20ae21623dfeb9c15532e11821",
+      "csv_hash_canonicalization": "LF line endings",
       "raw_file": "raw/maotai_qq_20261016.json"
     }
   },

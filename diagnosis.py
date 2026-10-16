@@ -116,7 +116,9 @@ def load_market(data, root=ROOT):
         raise ValueError("行情尚未完成来源核验")
     path = Path(root) / "data" / meta["file"]
     content = path.read_bytes()
-    if hashlib.sha256(content).hexdigest() != meta["source"]["csv_sha256"]:
+    # Git commonly converts LF/CRLF between Windows and Linux checkouts.
+    canonical = content.replace(b"\r\n",b"\n")
+    if hashlib.sha256(canonical).hexdigest() != meta["source"]["csv_sha256"]:
         raise ValueError("行情文件与已核验哈希不一致")
     frame = validate_market(content.decode("utf-8"))
     if len(frame) != meta["observations"] or str(frame.date.iloc[-1].date()) != meta["as_of"] or str(frame.date.iloc[0].date()) != meta["start"]:
