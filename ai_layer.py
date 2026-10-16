@@ -3,6 +3,7 @@ import json
 import requests
 import re
 from diagnosis import select_dimensions
+from request_gate import SHARED_GATE, request_identity
 
 PROVIDERS = {
     "openai": {"label":"OpenAI", "endpoint":"https://api.openai.com/v1/chat/completions",
@@ -35,6 +36,7 @@ ERRORS = {
     "configuration": ("AI服务商配置无效", "请将AI_PROVIDER设为zhipu或openai；智谱模型固定为glm-4.7-flash。"),
     "refusal": ("模型未提供可用研究结果", "请改写为公司研究问题后重试。"),
     "output": ("模型结果未通过证据校验", "返回格式或证据引用不合法，已拒绝展示AI结果。请重新生成。"),
+    "busy": ("已有AI请求正在处理", "同一服务商密钥每次只处理一个请求。请等待当前请求完成后再生成；本次未向API发出新请求。"),
 }
 
 def _failure(ids, code, status=None):
@@ -181,3 +183,13 @@ def rank_evidence(question, evidence, api_key="", model="gpt-4.1-mini", enabled=
         return _failure(fallback,"network")
     except (ValueError, KeyError, IndexError, TypeError, AttributeError):
         return _failure(fallback,"output")
+
+
+def guarded_rank_evidence(question, evidence, api_key="", model="gpt-4.1-mini", enabled=False, include_analysis=False, provider="openai", gate=None):
+    args=(question,evidence,api_key,model,enabled,include_analysis,provider)
+    if not enabled or not evidence or not isinstance(api_key,str) or not api_key.strip() or provider != "zhipu" or model != "glm-4.7-flash":
+        return rank_evidence(*args)
+    account,request_id=request_identity(provider,model,api_key,question,evidence,include_analysis)
+    dimensions=select_dimensions(question)
+    fallback=[c["id"] for c in evidence if c["dimension"] in dimensions]
+    return (gate or SHARED_GATE).run(account,request_id,lambda:rank_evidence(*args),lambda code:_failure(fallback,code))

@@ -5,7 +5,7 @@ import pandas as pd
 import streamlit as st
 from diagnosis import (DIMENSIONS, load_data, metrics, cards, select_dimensions,
                        is_trade_request, staleness, validate_market, market_metrics)
-from ai_layer import rank_evidence, resolve_config, PROVIDERS
+from ai_layer import guarded_rank_evidence, resolve_config, PROVIDERS
 from diagnosis import all_sources, load_market, valuation_metrics, peer_comparison, research_brief
 
 st.set_page_config(page_title="证据镜 · Stock Evidence Lab", page_icon="🔎", layout="wide")
@@ -113,7 +113,7 @@ if st.button("生成证据诊断", type="primary", width='stretch',key="diagnose
     else:
         with st.spinner("核对证据与研究维度…"):
             scoped_evidence = [c for c in evidence if c["dimension"] in selected]
-            st.session_state.nav = rank_evidence(question, scoped_evidence, ai_config["api_key"],
+            st.session_state.nav = guarded_rank_evidence(question, scoped_evidence, ai_config["api_key"],
                 ai_config["model"], enabled,include_analysis=True,provider=ai_config["provider"])
             st.session_state.nav_context = (question, tuple(selected), enabled,ai_config["provider"],ai_config["model"])
 nav = st.session_state.get("nav")
@@ -121,6 +121,12 @@ if nav and st.session_state.get("nav_context") != (question,tuple(selected),enab
     st.info("问题、维度或运行模式已改变，请重新生成证据导航。下方仍可浏览全部证据。")
     nav = None
 if nav:
+    if nav.get("request_source") == "cache":
+        st.caption("复用最近5分钟内相同问题、证据与模型的成功AI结果，本次未重复调用API。")
+    elif nav.get("request_source") == "api":
+        st.caption("请求记录：本次向智谱API发起1次请求；不自动重试。")
+    elif nav.get("request_source") == "gate":
+        st.caption("请求记录：本次由并发/冷却保护拦截，未向API发起新请求。")
     if nav["mode"] == "规则回退":
         st.warning(f"{nav['mode']} · {nav['notice']}")
         st.info(nav["action"])
