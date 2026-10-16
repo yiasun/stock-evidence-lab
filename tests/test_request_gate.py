@@ -6,7 +6,7 @@ from unittest.mock import Mock, patch
 
 import requests
 from ai_layer import guarded_rank_evidence
-from diagnosis import cards, load_data
+from diagnosis import cards, load_data, select_dimensions
 from request_gate import RequestGate, request_identity
 
 
@@ -70,8 +70,9 @@ class RequestGateTests(unittest.TestCase):
             first=self.run_request()
             self.assertEqual(first["provider_code"],"1302")
             self.assertEqual(first["retry_after_seconds"],60)
-            second=self.run_request("现金流")
+            second=self.run_request("估值")
             self.assertEqual(second["request_source"],"gate")
+            self.assertEqual(second["ids"],[c["id"] for c in self.evidence if c["dimension"] in select_dimensions("估值")])
             self.assertEqual(post.call_count,1)
             self.now+=61
             self.assertEqual(post.call_count,1)

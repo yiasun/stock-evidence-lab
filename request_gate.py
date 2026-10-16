@@ -41,6 +41,9 @@ class RequestGate:
             if account in self.blocked:
                 until,previous=self.blocked[account]
                 result=copy.deepcopy(previous)
+                # Cooldown belongs to the account, but local evidence selection
+                # belongs to the current question, never the failed old request.
+                result["ids"]=fallback(result["error_code"])["ids"]
                 seconds=max(1,math.ceil(until-now))
                 result.update(request_source="gate",retry_after_seconds=seconds,
                               action=f"本应用正在限流冷却，请至少等待{seconds}秒后手动重试。期间不会向API发起请求；持续限流需检查智谱控制台的模型速率上限。")
