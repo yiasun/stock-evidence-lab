@@ -71,6 +71,7 @@ with st.sidebar:
     st.caption(f"AI服务：{ai_config['label']} · {ai_config['model']}")
     if ai_config["provider"] == "zhipu":
         st.caption("智谱接入版 · 仅调用 GLM-4.7-Flash；无付费模型自动切换。")
+        st.caption("请求保护：单次处理 · 相同问题缓存5分钟 · 限流后冷却60秒。")
     if enabled and ai_config["provider"] not in PROVIDERS:
         st.warning("AI_PROVIDER配置无效，请设为zhipu或openai。")
     elif enabled and not ai_config["api_key"]:
