@@ -48,8 +48,8 @@ class EvidenceTests(unittest.TestCase):
         self.assertEqual({c["direction"] for c in self.evidence}, {"正面", "负面", "矛盾", "中性", "未知"})
         for c in self.evidence:
             if c["kind"] != "未知":
-                self.assertIn(c["source"], ["S1", "S2"])
-        self.assertFalse(self.data["market"]["verified"])
+                self.assertIn(c["source"], [s["id"] for s in all_sources(self.data)])
+        self.assertTrue(self.data["market"]["verified"])
 
     def test_event_after_financial_period(self):
         self.assertGreater(self.data["event"]["disclosed_at"], self.data["financials"][-1]["end"])

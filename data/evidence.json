@@ -1,31 +1,156 @@
 {
-  "company": "贵州茅台", "ticker": "600519.SH", "company_type": "白酒消费品（含财务公司）",
-  "verified_at": "2026-10-16T07:42:00Z",
+  "company": "贵州茅台",
+  "ticker": "600519.SH",
+  "company_type": "白酒消费品（含财务公司）",
+  "verified_at": "2026-10-16T09:04:18+00:00",
   "financial_source": {
-    "id": "S1", "title": "贵州茅台2026年半年度报告（未经审计）",
-    "url": "https://money.finance.sina.com.cn/corp/view/vCB_AllBulletinDetail.php?id=12496833&stockid=600519",
+    "id": "S1",
+    "title": "贵州茅台2026年半年度报告（未经审计）",
+    "url": "https://static.cninfo.com.cn/finalpage/2026-08-15/1225475868.PDF",
     "original_url": "https://static.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-08-15/600519_20260815_UXBN.pdf",
-    "disclosed_at": "2026-08-15", "period": "2026-01-01 / 2026-06-30",
-    "locator": "第二节 七 主要会计数据；第三节 财务报表相关科目变动分析",
-    "verification": "已核对新浪公告全文转载字段；上交所PDF返回验证页，尚未逐页交叉核验。保留原始链接。",
-    "unit": "人民币元", "scope": "合并口径；归母净利润单列，营业收入不含利息收入"
+    "disclosed_at": "2026-08-15",
+    "period": "2026-01-01 / 2026-06-30",
+    "locator": "PDF第5页：主要会计数据；第7页：财务报表相关科目变动分析",
+    "verification": "已下载巨潮原始PDF，提取并视觉核对第5、7页，与公告全文转载一致。",
+    "unit": "人民币元",
+    "scope": "合并口径；归母净利润单列，营业收入不含利息收入",
+    "mirror_url": "https://money.finance.sina.com.cn/corp/view/vCB_AllBulletinDetail.php?id=12496833&stockid=600519",
+    "sha256": "0e10aa26be46b1cf3cd03f06e834c7fb98d5dd0d661b96f8fddd4af7e846a4f6"
   },
   "financials": [
-    {"period":"2025H1", "end":"2025-06-30", "revenue":89389354416.84, "profit_parent":45402962298.10, "operating_cashflow":13119061031.33, "cost":7777491083.93},
-    {"period":"2026H1", "end":"2026-06-30", "revenue":90703260964.48, "profit_parent":44516880421.86, "operating_cashflow":70690750119.06, "cost":9473762565.88}
+    {
+      "period": "2025H1",
+      "end": "2025-06-30",
+      "revenue": 89389354416.84,
+      "profit_parent": 45402962298.1,
+      "operating_cashflow": 13119061031.33,
+      "cost": 7777491083.93
+    },
+    {
+      "period": "2026H1",
+      "end": "2026-06-30",
+      "revenue": 90703260964.48,
+      "profit_parent": 44516880421.86,
+      "operating_cashflow": 70690750119.06,
+      "cost": 9473762565.88,
+      "equity_parent": 251253594419.5,
+      "shares": 1250081601
+    }
   ],
   "cashflow_explanation": "公司将经营现金流变动主要归因于财务子公司吸收成员单位存款增加及不可随时支取的同业存款减少。",
   "event": {
-    "id":"S2", "title":"贵州茅台重大事项公告（临2026-028）",
-    "url":"https://epaper.cs.com.cn/zgzqb/html/2026-07/18/nw.D110000zgzqb_20260718_1-B052.htm",
-    "disclosed_at":"2026-07-18", "effective_at":"2026-07-18T00:00:00+08:00",
-    "locator":"中国证券报 B052版，公告正文价格调整段",
-    "retail_before":1539, "retail_after":1639, "contract_before":1269, "contract_after":1369,
-    "unit":"元/瓶", "scope":"飞天53%vol 500ml贵州茅台酒（2026）；i茅台零售价与销售合同价，非全产品提价"
+    "id": "S2",
+    "title": "贵州茅台重大事项公告（临2026-028）",
+    "url": "https://epaper.cs.com.cn/zgzqb/html/2026-07/18/nw.D110000zgzqb_20260718_1-B052.htm",
+    "disclosed_at": "2026-07-18",
+    "effective_at": "2026-07-18T00:00:00+08:00",
+    "locator": "中国证券报 B052版，公告正文价格调整段",
+    "retail_before": 1539,
+    "retail_after": 1639,
+    "contract_before": 1269,
+    "contract_after": 1369,
+    "unit": "元/瓶",
+    "scope": "飞天53%vol 500ml贵州茅台酒（2026）；i茅台零售价与销售合同价，非全产品提价"
   },
   "market": {
-    "verified":false, "file":"market_snapshot.csv", "unit":"原文件未提供成交量单位",
-    "reason":"继承的CSV没有来源、复权口径和成交量单位，隔离为待核验数据，不参与公司诊断或估值。"
+    "verified": true,
+    "file": "market_verified.csv",
+    "as_of": "2026-10-15",
+    "start": "2026-09-01",
+    "observations": 27,
+    "adjustment": "不复权",
+    "price_unit": "人民币元",
+    "volume_unit": "股",
+    "amount_unit": "人民币元",
+    "reason": "已保存腾讯证券公开历史日线响应并核对字段与范围；单一公开来源，不保证交易日连续或等同交易所最终口径。",
+    "source": {
+      "id": "S3",
+      "title": "腾讯证券 · 贵州茅台历史日线冻结快照",
+      "url": "https://gu.qq.com/sh600519/gp",
+      "endpoint": "https://proxy.finance.qq.com/ifzqgtimg/appstock/app/newfqkline/get?param=sh600519,day,2026-09-01,2026-10-15,60,",
+      "disclosed_at": "2026-10-15",
+      "fetched_at": "2026-10-16T09:04:18+00:00",
+      "period": "2026-09-01 / 2026-10-15",
+      "locator": "data.sh600519.day；本地严格筛选date范围，忽略返回的实时qt字段",
+      "unit": "价格元 / 成交量股 / 成交额元",
+      "scope": "非复权日线；上交所主板成交量由手×100换算为股，成交额由万元×10000换算为元",
+      "mapping_reference": "https://github.com/akfamily/akshare/blob/main/akshare/stock_feature/stock_hist_tx.py",
+      "sha256": "d8c4b6071b18d08f1ff238f9f3adb7b1f42f94cd60e903d6359c792165ef6716",
+      "csv_sha256": "42d745d2a0dfd25535992f2ff9a86c4153697bf4eda48aa022f3488c47880622",
+      "raw_file": "raw/maotai_qq_20261016.json"
+    }
   },
-  "peers": {"verified":false, "reason":"没有同口径同期同行数据，不能得出行业排名、相对估值或市场份额结论。"}
+  "peers": {
+    "verified": true,
+    "source": {
+      "id": "S5",
+      "title": "五粮液2026年半年度报告",
+      "url": "https://static.cninfo.com.cn/finalpage/2026-08-29/1225531252.PDF",
+      "disclosed_at": "2026-08-29",
+      "period": "2026-01-01 / 2026-06-30",
+      "locator": "PDF第6–7页：主要会计数据及注1、注2",
+      "unit": "人民币元",
+      "scope": "合并口径，归母净利润单列；上年同期列为2025H1",
+      "sha256": "15153679faee48d1b1b00c50557a88bdcbdf8cb4cbc49b8762e10f70210dfb5b"
+    },
+    "scope": "两家公司定向样本，不代表全行业；不同产品、渠道及财务子公司结构影响可比性。",
+    "financials": [
+      {
+        "company": "五粮液",
+        "ticker": "000858.SZ",
+        "period": "2025H1",
+        "end": "2025-06-30",
+        "revenue": 23509972048.65,
+        "profit_parent": 4623850715.13,
+        "operating_cashflow": 31136736628.58
+      },
+      {
+        "company": "五粮液",
+        "ticker": "000858.SZ",
+        "period": "2026H1",
+        "end": "2026-06-30",
+        "revenue": 28416674541.77,
+        "profit_parent": 8752942991.31,
+        "operating_cashflow": -2153568792.32
+      }
+    ],
+    "explanation": "五粮液报告将利润增幅归因于上年同期低基数及动销举措等；现金流下降受收款政策变化及银行承兑汇票到期额度同比减少等影响。"
+  },
+  "dataset_version": "2.0",
+  "annual": {
+    "period": "2025FY",
+    "start": "2025-01-01",
+    "end": "2025-12-31",
+    "profit_parent": 82320067101.68,
+    "revenue": 168838102514.79,
+    "source": "S4"
+  },
+  "annual_source": {
+    "id": "S4",
+    "title": "贵州茅台2025年年度报告",
+    "url": "https://static.cninfo.com.cn/finalpage/2026-04-17/1225114741.PDF",
+    "disclosed_at": "2026-04-17",
+    "period": "2025-01-01 / 2025-12-31",
+    "locator": "PDF第6页：近三年主要会计数据",
+    "unit": "人民币元",
+    "scope": "合并营业收入、归母净利润；年度报告",
+    "sha256": "474905deeaf0f875fc0a1b097a626c0c7852c427faadc5d7fc7816cbf45ea288"
+  },
+  "valuation": {
+    "as_of": "2026-10-15",
+    "price": 1312.97,
+    "shares": 1250081601,
+    "shares_as_of": "2026-06-30",
+    "equity_parent": 251253594419.5,
+    "equity_as_of": "2026-06-30",
+    "ttm_start": "2025-07-01",
+    "ttm_end": "2026-06-30",
+    "status": "试算",
+    "assumption": "沿用2026-06-30期末股本，尚未核验期末至估值日的股本变化；因此仅为历史口径试算，非当日官方PE/PB。",
+    "sources": [
+      "S1",
+      "S3",
+      "S4"
+    ]
+  }
 }
