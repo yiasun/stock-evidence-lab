@@ -34,21 +34,35 @@ python -m streamlit run app.py
 消费品模板重点关注盈利、现金回款和渠道事件。当前只支持贵州茅台，不伪装成全市场通用模型。
 
 - `diagnosis.py`：确定性计算同比、营业收入口径毛利率、区间价格变化、最大回撤及估值试算；校验可比期次、行情哈希、字段日期与异常数据。
-- `ai_layer.py`：可选的自然语言证据选择/排序。调用OpenAI Chat Completions JSON模式，只接受已存在的证据ID；不渲染模型自由文本，也不允许模型计算财务数字。
+- `ai_layer.py`：可选的自然语言证据选择/排序与带引用的定性解读。支持OpenAI及智谱官方接口；本地校验引用、结构与研究边界，数字由程序计算。
 - `app.py`：用户修改诊断维度、查看反面证据和未知、钻取原始字段与公告。
 
-即使LLM漏选反面证据，界面仍保留所选维度的全部证据。LLM异常、超时或非法引用时显示“规则回退”，不会把接口失败包装成正常AI输出。当前不提供自由生成财务解读；AI的角色限于证据导航。
+即使LLM漏选反面证据，界面仍保留所选维度的全部证据。LLM异常、超时或非法引用时显示“规则回退”，不会把接口失败包装成正常AI输出。定性解读每段标记为“分析推断”，必须引用本次已提供的证据；界面可展开对应卡片与来源。正文拒绝额外阿拉伯数字、交易建议关键词及外部链接。引用校验和文本过滤不等于语义真实性验证，用户仍需核对原文。
+
+LLM错误会显示安全诊断：认证、权限、模型不可访问、额度/支出限制、瞬时限流、网络、超时或输出校验失败，附处理建议与HTTP状态。界面不显示API响应原文、异常字符串或密钥；仅显示白名单中的官方错误码。失败使用警告样式。额度错误不会自动连续重试；需账户所有者先处理额度/限制。OpenAI请求使用严格JSON Schema；智谱使用JSON模式与提示中的Schema，两者均执行本地引用和内容校验。
 
 ## 环境变量与Secrets
 
-可选：`OPENAI_API_KEY`、`AI_MODEL`（默认`gpt-4.1-mini`，沿用原仓库配置）。`.env.example`仅是模板，应用不会自动读取`.env`。本地通过环境变量或`.streamlit/secrets.toml`配置；Cloud使用Advanced settings的Secrets。不要把密钥提交到GitHub。
+`.env.example`仅是模板，应用不会自动读取`.env`。本地通过环境变量或`.streamlit/secrets.toml`配置；Cloud在Manage app → Settings → Secrets配置。不要把密钥提交到GitHub或发送到聊天。
+
+**智谱免费模型接入：**
+
+```toml
+AI_PROVIDER = "zhipu"
+ZHIPU_API_KEY = "替换为你在智谱创建的密钥"
+```
+
+该分支固定使用`glm-4.7-flash`，忽略旧的`AI_MODEL`，不自动切换付费模型，不启用联网搜索或知识库等附加工具。2026-10-16核对[官方定价](https://docs.bigmodel.cn/cn/guide/start/pricing)：该模型输入/输出免费；政策可调整，实际以调用时官方定价及账单为准。失败不连续自动重试。智谱与OpenAI密钥独立，缺少智谱密钥不会借用OpenAI密钥。
+
+**OpenAI接入（默认，保留原配置兼容）：**
 
 ```toml
 OPENAI_API_KEY = "your-key"
+AI_PROVIDER = "openai"
 AI_MODEL = "gpt-4.1-mini"
 ```
 
-默认关闭LLM。用户主动勾选时，研究问题和公开证据卡会发往固定的`https://api.openai.com/v1/chat/completions`。不支持任意Base URL，避免密钥被转发到未知服务。没有密钥时不发请求。用户上传的行情不会发送到LLM，也不会写入仓库；请勿输入个人敏感信息。
+默认关闭LLM。用户主动勾选时，研究问题和公开证据卡会按AI_PROVIDER发往固定的`https://api.openai.com/v1/chat/completions`或`https://open.bigmodel.cn/api/paas/v4/chat/completions`，侧栏显示服务商及模型。不支持任意Base URL，并禁止HTTP重定向。没有对应密钥时不发请求。用户上传的行情不会发送到LLM，也不会写入仓库；请勿输入个人敏感信息。智谱使用JSON模式、max_tokens与关闭深度思考的参数适配；真实兼容性需配置密钥后在线验收。
 
 ## 数据与证据
 
@@ -95,4 +109,4 @@ python -m unittest discover -s tests -v
 
 在线产品：[证据镜 · Stock Evidence Lab](https://stock-evidence-lab-yiasun.streamlit.app/)。已部署Streamlit Community Cloud，Python 3.11。自动化与公网实测记录见测试报告。
 
-按用户选择，本阶段先完善规则版，不配置密钥；真实LLM调用未验收。演示视频为可选项，仓库提供脚本，尚未录制。
+真实OpenAI请求已诊断为HTTP 429 / credit_balance_exhausted，未获得成功解读。智谱接入和带引用解读的成功路径通过模拟响应测试，尚待账户所有者配置ZHIPU_API_KEY后进行真实调用验收。演示视频为可选项，仓库提供脚本，尚未录制。

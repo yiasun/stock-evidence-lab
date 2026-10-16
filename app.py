@@ -5,7 +5,7 @@ import pandas as pd
 import streamlit as st
 from diagnosis import (DIMENSIONS, load_data, metrics, cards, select_dimensions,
                        is_trade_request, staleness, validate_market, market_metrics)
-from ai_layer import rank_evidence
+from ai_layer import rank_evidence, resolve_config, PROVIDERS
 from diagnosis import all_sources, load_market, valuation_metrics, peer_comparison, research_brief
 
 st.set_page_config(page_title="证据镜 · Stock Evidence Lab", page_icon="🔎", layout="wide")
@@ -40,6 +40,8 @@ def apply_question(text):
     st.session_state.question = text
     st.session_state.pop("nav", None)
 
+ai_config = resolve_config(secret)
+
 def use_recommended():
     st.session_state.dimensions = select_dimensions(st.session_state.question)
 
@@ -65,10 +67,15 @@ with st.sidebar:
     st.caption("财务：2026H1 / 2025H1\n\n核验日：2026-10-16\n\n行情：27个观测点 / 截至10月15日\n\n估值：历史口径试算\n\n同行：茅台 / 五粮液")
     st.info("冻结证据研究版。启动时不抓取实时行情。")
     enabled = st.checkbox("启用 LLM 证据导航", value=False,
-        help="需在部署端配置OPENAI_API_KEY。开启后，研究问题及公开证据卡会发送至OpenAI；请勿输入个人持仓或隐私。")
-    if enabled and not secret("OPENAI_API_KEY"):
+        help="启用后，研究问题及公开证据卡会发送至下方所列服务商，生成带引用的定性解读。请勿输入个人持仓或隐私。")
+    st.caption(f"AI服务：{ai_config['label']} · {ai_config['model']}")
+    if ai_config["provider"] == "zhipu":
+        st.caption("智谱接入版 · 仅调用 GLM-4.7-Flash；无付费模型自动切换。")
+    if enabled and ai_config["provider"] not in PROVIDERS:
+        st.warning("AI_PROVIDER配置无效，请设为zhipu或openai。")
+    elif enabled and not ai_config["api_key"]:
         st.warning("未配置服务端密钥，本次继续使用规则模式。")
-    st.caption("数字由程序计算；LLM组织证据；用户沿来源继续研究。")
+    st.caption("数字由程序计算；LLM选择证据并解释关系；分析推断需沿来源核对。")
 
 st.markdown('<div class="eyebrow">EVIDENCE FIRST · COMPANY RESEARCH</div>', unsafe_allow_html=True)
 st.title("证据镜 · 看见结论背后的证据")
@@ -106,11 +113,11 @@ if st.button("生成证据诊断", type="primary", width='stretch',key="diagnose
     else:
         with st.spinner("核对证据与研究维度…"):
             scoped_evidence = [c for c in evidence if c["dimension"] in selected]
-            st.session_state.nav = rank_evidence(question, scoped_evidence, secret("OPENAI_API_KEY"),
-                secret("AI_MODEL", "gpt-4.1-mini"), enabled)
-            st.session_state.nav_context = (question, tuple(selected), enabled)
+            st.session_state.nav = rank_evidence(question, scoped_evidence, ai_config["api_key"],
+                ai_config["model"], enabled,include_analysis=True,provider=ai_config["provider"])
+            st.session_state.nav_context = (question, tuple(selected), enabled,ai_config["provider"],ai_config["model"])
 nav = st.session_state.get("nav")
-if nav and st.session_state.get("nav_context") != (question,tuple(selected),enabled):
+if nav and st.session_state.get("nav_context") != (question,tuple(selected),enabled,ai_config["provider"],ai_config["model"]):
     st.info("问题、维度或运行模式已改变，请重新生成证据导航。下方仍可浏览全部证据。")
     nav = None
 if nav:
@@ -126,6 +133,25 @@ if nav:
 
 tabs = st.tabs(["多维诊断", "证据账本", "行情与估值", "同行对比", "研究清单", "行情核验沙盒", "研究边界"])
 with tabs[0]:
+    if nav and nav.get("interpretations"):
+        st.markdown("### AI证据解读 · 分析推断")
+        st.caption("以下为模型对已列证据的解释，并非新增公司事实。引用通过校验不等于结论已被证明，请展开证据卡核对。")
+        for interpretation in nav["interpretations"]:
+            with st.container(border=True):
+                st.write(interpretation["text"])
+                st.caption("分析推断 · 引用：" + " / ".join(interpretation["evidence_ids"]))
+                for evidence_id in interpretation["evidence_ids"]:
+                    cited=next(c for c in evidence if c["id"] == evidence_id)
+                    with st.expander(f"核对AI引用 {evidence_id} · {cited['title']}"):
+                        st.write(cited["body"])
+                        st.caption(cited["kind"] + " · " + cited["formula"])
+                        for sid in cited.get("sources",[cited["source"]]):
+                            if sid:
+                                render_source(source_by_id[sid])
+        st.markdown("**AI建议继续验证的问题**")
+        for followup in nav["research_questions"]:
+            st.write(followup["question"])
+            st.caption("对应证据：" + " / ".join(followup["evidence_ids"]))
     if nav:
         st.markdown("### 本次研究归纳")
         brief = research_brief(question, selected, evidence)
@@ -179,6 +205,12 @@ with tabs[0]:
     report = {"question": question, "company": data["ticker"], "mode": nav["mode"] if nav else "证据浏览",
               "verified_at": data["verified_at"], "dimensions": selected, "evidence": shown,
               "sources": sources, "valuation_assumptions":data["valuation"],"research_tasks":selected_tasks(), "limitations": "冻结证据包；估值为有假设的历史试算；非实时诊断，不提供投资建议"}
+    if nav:
+        report["ai_provider"] = ai_config["provider"]
+        report["ai_model"] = ai_config["model"]
+        report["ai_interpretations"] = nav.get("interpretations",[])
+        report["ai_research_questions"] = nav.get("research_questions",[])
+        report["api_diagnostic"] = {k:nav[k] for k in ["error_code","http_status","provider_code"] if k in nav}
     st.download_button("导出本次研究记录（JSON）", json.dumps(report, ensure_ascii=False, indent=2),
                        "stock-evidence-research.json", "application/json")
 
@@ -289,10 +321,10 @@ with tabs[5]:
 with tabs[6]:
     st.markdown("### 研究边界与分工")
     st.write("面向希望追问证据的个人研究者。单标的MVP，不评价好坏、不承诺涨跌、不输出交易建议。")
-    st.markdown("- **程序**：同比、毛利率、样本区间收益与回撤，以及字段、日期、引用校验。\n- **LLM（可选）**：根据自然语言选择、排序现有证据卡；不生成数字或独立金融结论。\n- **用户**：核对原文、修改维度，沿未知证据继续研究。")
+    st.markdown("- **程序**：同比、毛利率、样本区间收益与回撤，以及字段、日期、引用校验。\n- **LLM（可选）**：选择证据，解释证据关系和矛盾，输出带引用的定性推断及继续验证的问题；不计算财务数字。\n- **用户**：核对原文、修改维度，沿未知证据继续研究。")
     st.write("正面/负面表示单项指标的研究方向，并非综合评级。事实为已披露字段或明确算式；推断有证据但不证明因果；未知不会补成正常值。")
     st.write("已补齐：巨潮原始财报关键页核验、腾讯历史行情、明确假设的TTM/PB试算及茅台/五粮液同期样本对比。仍缺：实时行情、估值日实际股本核验、历史估值分位、全行业样本、公告更新监控、自动财报解析与多标的支持。")
-    st.write("半年报未经审计；已下载巨潮PDF并核对关键页，证据账本保留页码和SHA-256。新闻传闻、股价归因及调价后的业绩兑现仍不作确定性判断。用户选择先完善规则版，真实LLM未验收。")
+    st.write("半年报未经审计；已下载巨潮PDF并核对关键页，证据账本保留页码和SHA-256。新闻传闻、股价归因及调价后的业绩兑现仍不作确定性判断。LLM真实可用性以本次运行结果为准；规则回退不能视为AI验收通过。")
 
 st.divider()
 st.caption("证据镜 · Stock Evidence Lab  |  历史证据研究演示  |  非投资建议")
