@@ -6,7 +6,7 @@
 
 ## 启动
 
-建议 Python 3.11（本地另在 Python 3.10.11 实测）。
+建议 Python 3.11（本地另在 Python 3.10.0 实测）。
 
 ```bash
 python -m venv .venv
@@ -86,4 +86,6 @@ python -m unittest discover -s tests -v
 
 不输出确定性涨跌、买卖、仓位或收益承诺；正面/负面为单项证据方向，非股票评级。只有两个可比半年期，不声称长期趋势。没有实时行情、完整TTM估值、同行横比、自动公告更新、OCR财报解析或多标的支持。CSV未验证交易日连续和复权；区间价格变化不包含股息，不等于投资总回报。
 
-尚需外部验收：Cloud上线与公网操作；真实LLM调用需账户密钥。演示视频为可选项，仓库提供脚本，尚未录制。
+在线产品：[证据镜 · Stock Evidence Lab](https://stock-evidence-lab-yiasun.streamlit.app/)。已部署Streamlit Community Cloud，Python 3.11。自动化与公网实测记录见测试报告。
+
+尚需外部验收：真实LLM调用需账户密钥。演示视频为可选项，仓库提供脚本，尚未录制。
