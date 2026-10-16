@@ -107,6 +107,21 @@ def _safe_analysis_text(value, limit):
         raise ValueError("分析越过研究边界")
     return text
 
+
+def _without_declared_citations(value, ids):
+    """Remove redundant ID annotations, never financial figures or unknown IDs."""
+    if not isinstance(value,str):
+        return value
+    # The IDs have already passed the local evidence whitelist. Strip a wrapper
+    # only if its entire content consists of this paragraph's declared IDs.
+    def annotation(match):
+        tokens=[token.strip() for token in re.split(r"[、,，/\s]+",match.group(1)) if token.strip()]
+        return "" if tokens and all(token in ids for token in tokens) else match.group(0)
+    text=re.sub(r"[\[【（(]([^\]】）)]+)[\]】）)]",annotation,value)
+    for evidence_id in sorted(ids,key=len,reverse=True):
+        text=re.sub(r"(?<![A-Za-z0-9])"+re.escape(evidence_id)+r"(?![A-Za-z0-9])","",text)
+    return text.strip()
+
 def _validated_analysis(raw, evidence):
     allowed={c["id"] for c in evidence}
     def refs(ids):
@@ -124,10 +139,10 @@ def _validated_analysis(raw, evidence):
         try:
             if not isinstance(item,dict) or item.get("kind") != "推断":
                 raise ValueError("模型分析不能标记为公司事实")
-            text=_safe_analysis_text(item["text"],220)
+            ids=refs(item["evidence_ids"])
+            text=_safe_analysis_text(_without_declared_citations(item["text"],ids),220)
             if not any(marker in text for marker in ["可能","尚","需","不能","不宜","不代表","不足以","无法"]):
                 raise ValueError("分析缺少推断边界")
-            ids=refs(item["evidence_ids"])
             _check_event_grounding(text,ids,allowed)
             checked.append({"kind":"推断","text":text,"evidence_ids":ids})
         except (ValueError,KeyError,TypeError) as exc:
@@ -135,7 +150,13 @@ def _validated_analysis(raw, evidence):
             last_error=exc
     if not checked:
         raise last_error or ValueError("分析段落数无效")
-    followups=[{"question":_safe_analysis_text(item["question"],160),"evidence_ids":refs(item["evidence_ids"])} for item in questions]
+    followups=[]
+    for item in questions:
+        try:
+            ids=refs(item["evidence_ids"])
+            followups.append({"question":_safe_analysis_text(_without_declared_citations(item["question"],ids),160),"evidence_ids":ids})
+        except (ValueError,KeyError,TypeError) as exc:
+            rejected.append(OUTPUT_REASONS.get(str(exc),"invalid_json_or_shape"))
     return checked,followups,{"withheld_count":len(rejected),"reasons":rejected}
 
 
@@ -248,7 +269,7 @@ def guarded_rank_evidence(question, evidence, api_key="", model="gpt-4.1-mini", 
     args=(question,evidence,api_key,model,enabled,include_analysis,provider)
     if not enabled or not evidence or not isinstance(api_key,str) or not api_key.strip() or provider != "zhipu" or model != "glm-4.7-flash":
         return rank_evidence(*args)
-    account,request_id=request_identity(provider,model,api_key,question,evidence,include_analysis,policy_version="3.0-event-boundary")
+    account,request_id=request_identity(provider,model,api_key,question,evidence,include_analysis,policy_version="3.0-event-boundary-citations")
     dimensions=select_dimensions(question)
     fallback=[c["id"] for c in evidence if c["dimension"] in dimensions]
     def invoke():

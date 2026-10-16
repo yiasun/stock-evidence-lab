@@ -70,7 +70,10 @@ class ZhipuTests(unittest.TestCase):
                 self.assertNotIn("interpretations",result)
         body=analysis()
         body["research_questions"][0]["evidence_ids"]=["E999"]
-        self.assertEqual(self.run_analysis(body)["error_code"],"output")
+        result=self.run_analysis(body)
+        self.assertEqual(result["mode"],"LLM证据解读")
+        self.assertEqual(result["research_questions"],[])
+        self.assertEqual(result["analysis_checks"]["withheld_count"],1)
 
     def test_zhipu_business_errors_are_safe_and_distinct(self):
         for status,code,expected in [(401,"1000","authentication"),(429,"1113","quota"),(400,"1211","model"),(429,"1302","rate_limit"),(429,"1305","overloaded"),(429,"1308","rate_limit"),(400,"1301","refusal")]:

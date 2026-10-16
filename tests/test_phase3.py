@@ -4,7 +4,7 @@ from pathlib import Path
 from unittest.mock import Mock,patch
 
 from streamlit.testing.v1 import AppTest
-from ai_layer import _validated_analysis
+from ai_layer import _validated_analysis, _without_declared_citations
 from diagnosis import cards,load_data
 from research_export import to_markdown
 from request_gate import request_identity
@@ -34,6 +34,13 @@ class SubmissionTests(unittest.TestCase):
         new=request_identity(*args,policy_version="new")
         self.assertEqual(old[0],new[0])
         self.assertNotEqual(old[1],new[1])
+
+    def test_declared_citation_formatting_does_not_hide_financial_numbers(self):
+        text="现金流变化尚不能证明主业改善。[E3 / E4]"
+        cleaned=_without_declared_citations(text,["E3","E4"])
+        self.assertEqual(cleaned,"现金流变化尚不能证明主业改善。")
+        self.assertIn("20%",_without_declared_citations("利润可能增加20%，尚需核实。[E2]",["E2"]))
+        self.assertIn("E999",_without_declared_citations("尚需核对[E999]",["E2"]))
 
     def test_readable_export_keeps_ai_citations_when_visual_filter_hides_cards(self):
         response=Mock(status_code=200)

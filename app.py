@@ -165,7 +165,8 @@ with tabs[0]:
                         for sid in cited.get("sources",[cited["source"]]):
                             if sid:
                                 render_source(source_by_id[sid])
-        st.markdown("**AI建议继续验证的问题**")
+        if nav["research_questions"]:
+            st.markdown("**AI建议继续验证的问题**")
         for followup in nav["research_questions"]:
             st.write(followup["question"])
             st.caption("对应证据：" + " / ".join(followup["evidence_ids"]))
