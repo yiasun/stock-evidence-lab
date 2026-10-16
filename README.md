@@ -109,4 +109,4 @@ python -m unittest discover -s tests -v
 
 在线产品：[证据镜 · Stock Evidence Lab](https://stock-evidence-lab-yiasun.streamlit.app/)。已部署Streamlit Community Cloud，Python 3.11。自动化与公网实测记录见测试报告。
 
-真实OpenAI请求已诊断为HTTP 429 / credit_balance_exhausted，未获得成功解读。智谱接入和带引用解读的成功路径通过模拟响应测试，尚待账户所有者配置ZHIPU_API_KEY后进行真实调用验收。演示视频为可选项，仓库提供脚本，尚未录制。
+真实OpenAI请求已诊断为HTTP 429 / credit_balance_exhausted，未获得成功解读。智谱接入和带引用解读的成功路径通过模拟响应测试；账户所有者配置ZHIPU_API_KEY后，线上已确认服务为智谱glm-4.7-flash，实际请求返回HTTP 429 / 1302（账户速率限制），未获得可评价的AI解读。需检查控制台模型并发/速率上限，不能将规则回退视为AI验收成功。演示视频为可选项，仓库提供脚本，尚未录制。

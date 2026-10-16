@@ -69,3 +69,5 @@ Cloud已在Python 3.11部署成功：[在线产品](https://stock-evidence-lab-y
 此前真实OpenAI调用已确认HTTP 429 / credit_balance_exhausted。智谱API尚未配置密钥；当前只验收集成代码与规则页面，不宣称真实GLM解读已通过。
 
 发布提交70e2783：[GitHub Actions](https://github.com/yiasun/stock-evidence-lab/actions/runs/38884497683)在Linux / Python 3.11通过全部检查。公网刷新后可见新加的服务商/模型状态（Secrets未切换，仍为OpenAI），点击“生成证据诊断”显示规则模式、E1–E5及研究归纳；页面无异常。智谱真实调用仍待ZHIPU_API_KEY配置，不把上述规则实测当作GLM成功验收。
+
+用户随后完成Secrets配置。实际公网刷新确认“AI服务：智谱 BigModel · glm-4.7-flash”，勾选LLM导航后生成，返回“规则回退”、HTTP 429、官方错误码1302。界面保留本地证据并明确未生成新的AI结论。间隔后一次手动验收重试，页面仍显示1302，未取得成功解读；停止继续请求，待检查账户对该模型的并发/速率上限。1302按[官方说明](https://docs.bigmodel.cn/cn/api/rate-limit/)归为账户限流，未据此推断余额耗尽或要求充值。
