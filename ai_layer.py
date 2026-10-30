@@ -7,6 +7,7 @@ from diagnosis import select_dimensions
 from request_gate import SHARED_GATE, request_identity
 
 FREE_ZHIPU_MODELS = ("glm-4.7-flash", "glm-4-flash-250414")
+POLICY_VERSION = "3.1-event-clause-boundaries"
 OUTPUT_REASONS = {
     "分析文本长度或类型无效":"text_length",
     "分析包含额外数字或外部标记":"extra_numbers_or_markup",
@@ -170,7 +171,10 @@ def _check_event_grounding(text, ids, allowed):
         return
     if not {"E6","E7"}.issubset(allowed) or not {"E6","E7"}.issubset(ids):
         raise ValueError("调价解读缺少事件及未知证据")
-    for clause in re.split(r"[，,。；;！？!?]",text):
+    # Uncertainty in one proposition cannot excuse an unsupported proposition
+    # across a contrast/addition connector. This remains a dataset-specific
+    # regression guard, not general Chinese semantic entailment checking.
+    for clause in re.split(r"[，,。；;！？!?]|但(?:是)?|然而|不过|可是|却|同时|并且|而且",text):
         negated=any(word in clause for word in ["不能","无法","不足以","不代表","不宜","尚未"])
         if negated:
             continue
@@ -269,7 +273,7 @@ def guarded_rank_evidence(question, evidence, api_key="", model="gpt-4.1-mini", 
     args=(question,evidence,api_key,model,enabled,include_analysis,provider)
     if not enabled or not evidence or not isinstance(api_key,str) or not api_key.strip() or provider != "zhipu" or model != "glm-4.7-flash":
         return rank_evidence(*args)
-    account,request_id=request_identity(provider,model,api_key,question,evidence,include_analysis,policy_version="3.0-event-boundary-citations")
+    account,request_id=request_identity(provider,model,api_key,question,evidence,include_analysis,policy_version=POLICY_VERSION)
     dimensions=select_dimensions(question)
     fallback=[c["id"] for c in evidence if c["dimension"] in dimensions]
     def invoke():

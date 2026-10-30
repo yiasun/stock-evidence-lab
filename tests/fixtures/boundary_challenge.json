@@ -1,0 +1,14 @@
+[
+  {"id":"B01","expected":"reject","text":"调价影响可能显著但不能解释此前业绩。","refs":["E6","E7"]},
+  {"id":"B02","expected":"reject","text":"调价可能导致上半年利润下降但尚未核实。","refs":["E6","E7"]},
+  {"id":"B03","expected":"reject","text":"尚未取得期后数据但调价影响可能有限。","refs":["E6","E7"]},
+  {"id":"B04","expected":"reject","text":"调价作用可能明显然而尚未取得完整数据。","refs":["E6","E7"]},
+  {"id":"B05","expected":"reject","text":"尚未获得期后数据不过调价影响可能较大。","refs":["E6","E7"]},
+  {"id":"B06","expected":"reject","text":"调价可能造成此前利润下降可是尚未核实。","refs":["E6","E7"]},
+  {"id":"B07","expected":"reject","text":"调价影响可能巨大同时尚未取得完整数据。","refs":["E6","E7"]},
+  {"id":"B08","expected":"reject","text":"尚未取得期后数据并且调价贡献可能有限。","refs":["E6","E7"]},
+  {"id":"G01","expected":"accept","text":"调价不能解释上半年利润变化，需要核对期后披露。","refs":["E6","E7"]},
+  {"id":"G02","expected":"accept","text":"调价影响尚未明确，不能判断影响显著或有限。","refs":["E6","E7"]},
+  {"id":"G03","expected":"accept","text":"调价可能影响后续业绩但尚需期后数据。","refs":["E6","E7"]},
+  {"id":"G04","expected":"accept","text":"现金流变化尚不能证明主业改善，需要核对财务公司资金。","refs":["E3","E4"]}
+]
