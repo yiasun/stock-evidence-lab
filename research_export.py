@@ -32,6 +32,27 @@ def to_markdown(record):
     for task in record["research_tasks"]:
         mark="x" if task["status"] == "用户已核对" else " "
         lines += [f"- [{mark}] {task['evidence_id']} · {task['task']}"]
+    if record.get("claim_review"):
+        lines += ["", "## 主张复核（用户人工意见）", "", "复核判定不构成系统自动事实认证；问题、范围、证据、模型输出或策略变化后可能失效。", ""]
+        for claim in record["claim_review"]["claims"]:
+            lines += ["### " + claim["origin"] + " · " + claim["status"], "", claim["text"],
+                      "引用：" + " / ".join(claim["evidence_ids"])]
+            review = claim.get("review")
+            if review:
+                lines += ["人工复核时间：" + review["reviewed_at"]]
+                for basis in review["basis"]:
+                    lines += [f"- 依据：{basis['evidence_id']} / {basis['source_id']}；定位：{basis['locator']}；说明：{basis['note']}"]
+                if review["missing_material"]:
+                    lines += ["缺少材料：" + review["missing_material"]]
+            lines += [""]
+        if record["claim_review"]["history"]:
+            lines += ["### 复核历史", ""]
+            for review in record["claim_review"]["history"]:
+                lines += [f"- {review['validity']} · {review['status']} · {review['reviewed_at']}：{review['text']}"]
+                for basis in review["basis"]:
+                    lines += [f"  依据：{basis['evidence_id']} / {basis['source_id']}；定位：{basis['locator']}；说明：{basis['note']}"]
+                if review["missing_material"]:
+                    lines += ["  缺少材料：" + review["missing_material"]]
     lines += ["", "## 边界与假设", "", record["limitations"], "",record["valuation_assumptions"]["assumption"],
               "", "任务勾选仅记录用户操作，不自动证明证据或AI结论正确。", ""]
     return "\n".join(lines)

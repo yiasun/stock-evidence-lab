@@ -5,9 +5,10 @@ import pandas as pd
 import streamlit as st
 from diagnosis import (DIMENSIONS, load_data, metrics, cards, select_dimensions,
                        is_trade_request, staleness, validate_market, market_metrics)
-from ai_layer import guarded_rank_evidence, resolve_config, PROVIDERS
+from ai_layer import guarded_rank_evidence, resolve_config, PROVIDERS, POLICY_VERSION
 from diagnosis import all_sources, load_market, valuation_metrics, peer_comparison, research_brief
 from research_export import to_markdown
+from review_records import review_context, build_claims, create_review, review_snapshot, fingerprint, STATUSES
 
 st.set_page_config(page_title="证据镜 · Stock Evidence Lab", page_icon="🔎", layout="wide")
 st.markdown('''<style>
@@ -82,7 +83,7 @@ with st.sidebar:
 st.markdown('<div class="eyebrow">EVIDENCE FIRST · COMPANY RESEARCH</div>', unsafe_allow_html=True)
 st.title("证据镜 · 看见结论背后的证据")
 st.markdown('<p class="hero-note">从一个问题出发，交叉检查经营、财务与事件。让事实、推断和未知各归其位，把下一步研究留给你。</p>', unsafe_allow_html=True)
-st.caption("提交演示版 v3 · 贵州茅台 600519.SH  ·  冻结证据研究  ·  人民币 / 合并口径")
+st.caption("本地升级版 v3.1 · 贵州茅台 600519.SH  ·  冻结证据研究  ·  人民币 / 合并口径")
 st.caption("使用路径：提出问题 → 生成诊断 → 核对引用 → 记录待验证任务。可直接使用规则模式，也可在侧栏开启AI解读。")
 st.warning(staleness(data))
 
@@ -144,7 +145,16 @@ if nav:
         st.success(f"{nav['mode']} · {nav['notice']}")
     st.caption("优先核对：" + " → ".join(nav["ids"]) + "。下方保留相反及缺失证据。")
 
-tabs = st.tabs(["多维诊断", "证据账本", "行情与估值", "同行对比", "研究清单", "行情核验沙盒", "研究边界"])
+scoped_cards = [c for c in evidence if c["dimension"] in selected]
+context = review_context(question, selected, data, nav["mode"] if nav else ("AI待生成" if enabled else "证据浏览"),
+                         ai_config["provider"] if enabled else "rules",
+                         nav.get("model_used", ai_config["model"]) if nav and enabled else "", POLICY_VERSION)
+claims = build_claims(scoped_cards, nav.get("interpretations", []) if nav else [], context)
+if "claim_review_history" not in st.session_state:
+    st.session_state.claim_review_history = []
+claim_review = review_snapshot(claims, st.session_state.claim_review_history)
+
+tabs = st.tabs(["多维诊断", "证据账本", "行情与估值", "同行对比", "研究清单", "行情核验沙盒", "研究边界", "主张复核"])
 with tabs[0]:
     if nav and nav.get("interpretations"):
         st.markdown("### AI证据解读 · 分析推断")
@@ -221,7 +231,7 @@ with tabs[0]:
     for label, q in [("核对回款质量", examples[0]), ("核对事件时间", examples[1]), ("补齐估值证据", examples[2])]:
         st.button(label, key="follow_"+label, on_click=apply_question, args=(q,))
     report = {"question": question, "company": data["ticker"], "mode": nav["mode"] if nav else "证据浏览",
-              "dataset_version":data["dataset_version"], "app_version":"3.0",
+              "dataset_version":data["dataset_version"], "app_version":"3.1", "claim_review":claim_review,
               "verified_at": data["verified_at"], "dimensions": selected,
               "evidence": [card for card in evidence if card["dimension"] in selected], "visible_evidence_ids":[card["id"] for card in shown],
               "sources": sources, "valuation_assumptions":data["valuation"],"research_tasks":selected_tasks(), "limitations": "冻结证据包；估值为有假设的历史试算；非实时诊断，不提供投资建议"}
@@ -351,6 +361,57 @@ with tabs[6]:
     st.write("正面/负面表示单项指标的研究方向，并非综合评级。事实为已披露字段或明确算式；推断有证据但不证明因果；未知不会补成正常值。")
     st.write("已补齐：巨潮原始财报关键页核验、腾讯历史行情、明确假设的TTM/PB试算及茅台/五粮液同期样本对比。仍缺：实时行情、估值日实际股本核验、历史估值分位、全行业样本、公告更新监控、自动财报解析与多标的支持。")
     st.write("半年报未经审计；已下载巨潮PDF并核对关键页，证据账本保留页码和SHA-256。新闻传闻、股价归因及调价后的业绩兑现仍不作确定性判断。LLM真实可用性以本次运行结果为准；规则回退不能视为AI验收通过。")
+
+with tabs[7]:
+    st.markdown("### 把你的判断和依据留在一起")
+    st.caption("程序校验不等于语义核验。这里记录你的人工意见；研究任务勾选不会自动完成主张复核。仅当前会话保存，请从多维诊断页导出JSON或Markdown。")
+    if st.session_state.pop("review_saved_notice", False):
+        st.success("复核已保存。你可继续复核，或导出含依据和历史的研究记录。")
+    if claims:
+        claim_by_id = {c["claim_id"]: c for c in claims}
+        claim_labels = {str(i + 1) + ". " + c["origin"] + " · " + c["text"]: c["claim_id"] for i, c in enumerate(claims)}
+        selected_label = st.selectbox("选择待复核主张", list(claim_labels),
+            key="review_claim_" + fingerprint(list(claim_by_id)))
+        selected_claim_id = claim_labels[selected_label]
+        claim = claim_by_id[selected_claim_id]
+        current_review = next(c for c in claim_review["claims"] if c["claim_id"] == selected_claim_id)
+        st.write(claim["text"])
+        st.caption("当前状态：" + current_review["status"] + " · 引用：" + " / ".join(claim["evidence_ids"]))
+        choices = []
+        for eid in claim["evidence_ids"]:
+            card = next(c for c in scoped_cards if c["id"] == eid)
+            with st.expander("复核依据 · " + eid):
+                st.write(card["body"])
+                st.caption(card["formula"])
+                for sid in card.get("sources", [card["source"]]):
+                    if sid:
+                        render_source(source_by_id[sid])
+                        choices.append(eid + " / " + sid)
+        with st.form("review_form_" + selected_claim_id):
+            status = st.selectbox("人工复核判定", STATUSES)
+            basis_choice = st.selectbox("依据证据与来源", ["未选择"] + choices)
+            locator = st.text_input("原文定位（页码/章节）", max_chars=300)
+            note = st.text_area("复核说明", max_chars=1000)
+            missing = st.text_area("缺少的材料（证据不足时必填）", max_chars=1000)
+            if st.form_submit_button("保存本条复核"):
+                basis = []
+                if basis_choice != "未选择":
+                    eid, sid = basis_choice.split(" / ")
+                    basis = [{"evidence_id": eid, "source_id": sid, "locator": locator, "note": note}]
+                try:
+                    review = create_review(claim, status, basis, missing, scoped_cards, sources)
+                    st.session_state.claim_review_history.append(review)
+                    st.session_state.review_saved_notice = True
+                    st.rerun()
+                except ValueError as exc:
+                    st.error(str(exc))
+    else:
+        st.info("当前范围没有可复核的推断。可选择包含推断的维度，或生成有效AI解读。")
+    stale_count = sum(r["validity"] == "已失效" for r in claim_review["history"])
+    if stale_count:
+        st.warning(f"有{stale_count}条历史复核与当前内容不匹配，已标为失效；不会用于当前主张。")
+    with st.expander("查看复核与历史记录"):
+        st.json(claim_review)
 
 st.divider()
 st.caption("证据镜 · Stock Evidence Lab  |  历史证据研究演示  |  非投资建议")
