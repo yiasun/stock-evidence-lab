@@ -1,0 +1,158 @@
+{
+  "kind": "authored_boundary_regression",
+  "model_calls": 0,
+  "ai_layer_sha256": "4a2ff86a3a1cffc50c3438163fd50067313ae8b07d1bf11a3b56f8c5f125bc66",
+  "limitation": "人工构造的开发回归集；不是独立留出集、用户研究或真实模型准确率。",
+  "total": 12,
+  "passed": 12,
+  "unsafe_accepted": 0,
+  "negative_total": 8,
+  "safe_rejected": 0,
+  "positive_total": 4,
+  "cases": [
+    {
+      "id": "B01",
+      "expected": "reject",
+      "text": "调价影响可能显著但不能解释此前业绩。",
+      "refs": [
+        "E6",
+        "E7"
+      ],
+      "actual": "reject",
+      "passed": true,
+      "reason": "event_effect_unknown"
+    },
+    {
+      "id": "B02",
+      "expected": "reject",
+      "text": "调价可能导致上半年利润下降但尚未核实。",
+      "refs": [
+        "E6",
+        "E7"
+      ],
+      "actual": "reject",
+      "passed": true,
+      "reason": "event_timing"
+    },
+    {
+      "id": "B03",
+      "expected": "reject",
+      "text": "尚未取得期后数据但调价影响可能有限。",
+      "refs": [
+        "E6",
+        "E7"
+      ],
+      "actual": "reject",
+      "passed": true,
+      "reason": "event_effect_unknown"
+    },
+    {
+      "id": "B04",
+      "expected": "reject",
+      "text": "调价作用可能明显然而尚未取得完整数据。",
+      "refs": [
+        "E6",
+        "E7"
+      ],
+      "actual": "reject",
+      "passed": true,
+      "reason": "event_effect_unknown"
+    },
+    {
+      "id": "B05",
+      "expected": "reject",
+      "text": "尚未获得期后数据不过调价影响可能较大。",
+      "refs": [
+        "E6",
+        "E7"
+      ],
+      "actual": "reject",
+      "passed": true,
+      "reason": "event_effect_unknown"
+    },
+    {
+      "id": "B06",
+      "expected": "reject",
+      "text": "调价可能造成此前利润下降可是尚未核实。",
+      "refs": [
+        "E6",
+        "E7"
+      ],
+      "actual": "reject",
+      "passed": true,
+      "reason": "event_timing"
+    },
+    {
+      "id": "B07",
+      "expected": "reject",
+      "text": "调价影响可能巨大同时尚未取得完整数据。",
+      "refs": [
+        "E6",
+        "E7"
+      ],
+      "actual": "reject",
+      "passed": true,
+      "reason": "event_effect_unknown"
+    },
+    {
+      "id": "B08",
+      "expected": "reject",
+      "text": "尚未取得期后数据并且调价贡献可能有限。",
+      "refs": [
+        "E6",
+        "E7"
+      ],
+      "actual": "reject",
+      "passed": true,
+      "reason": "event_effect_unknown"
+    },
+    {
+      "id": "G01",
+      "expected": "accept",
+      "text": "调价不能解释上半年利润变化，需要核对期后披露。",
+      "refs": [
+        "E6",
+        "E7"
+      ],
+      "actual": "accept",
+      "passed": true,
+      "reason": ""
+    },
+    {
+      "id": "G02",
+      "expected": "accept",
+      "text": "调价影响尚未明确，不能判断影响显著或有限。",
+      "refs": [
+        "E6",
+        "E7"
+      ],
+      "actual": "accept",
+      "passed": true,
+      "reason": ""
+    },
+    {
+      "id": "G03",
+      "expected": "accept",
+      "text": "调价可能影响后续业绩但尚需期后数据。",
+      "refs": [
+        "E6",
+        "E7"
+      ],
+      "actual": "accept",
+      "passed": true,
+      "reason": ""
+    },
+    {
+      "id": "G04",
+      "expected": "accept",
+      "text": "现金流变化尚不能证明主业改善，需要核对财务公司资金。",
+      "refs": [
+        "E3",
+        "E4"
+      ],
+      "actual": "accept",
+      "passed": true,
+      "reason": ""
+    }
+  ]
+}

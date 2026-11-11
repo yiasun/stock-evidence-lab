@@ -1,0 +1,95 @@
+test_http_errors_are_actionable_and_never_echo_key (test_ai_errors.APIErrorsTests) ... ok
+test_key_whitespace_is_removed_without_exposing_it (test_ai_errors.APIErrorsTests) ... ok
+test_quota_codes_and_quota_type_are_not_transient_rate_limits (test_ai_errors.APIErrorsTests) ... ok
+test_refusal_is_not_success (test_ai_errors.APIErrorsTests) ... ok
+test_schema_constrains_citations_to_supplied_evidence (test_ai_errors.APIErrorsTests) ... ok
+test_timeout_and_network_are_distinct (test_ai_errors.APIErrorsTests) ... ok
+test_empty_question_and_scope (test_app.AppFlowTests) ... 2026-11-11 21:21:03.094 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_main_flow_and_missing_api_key (test_app.AppFlowTests) ... 2026-11-11 21:21:05.626 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_recommended_dimensions_and_stale_result (test_app.AppFlowTests) ... 2026-11-11 21:21:06.905 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_research_checklist_persists_through_rerun (test_app.AppFlowTests) ... 2026-11-11 21:21:08.094 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_unsafe_claim_is_not_excused_by_uncertainty_in_another_clause (test_boundary_challenge.BoundaryChallengeTests) ... ok
+test_dimensions_and_unknown_question (test_core.EvidenceTests) ... ok
+test_event_after_financial_period (test_core.EvidenceTests) ... ok
+test_interface_failures_are_labelled (test_core.EvidenceTests) ... ok
+test_malformed_and_hallucinated_ai_references (test_core.EvidenceTests) ... ok
+test_market_bad_inputs (test_core.EvidenceTests) ... ok
+test_market_return_drawdown (test_core.EvidenceTests) ... ok
+test_missing_and_nonfinite_fields_fail_closed (test_core.EvidenceTests) ... ok
+test_no_key_never_calls_network (test_core.EvidenceTests) ... ok
+test_period_mismatch (test_core.EvidenceTests) ... ok
+test_recomputed_financial_numbers (test_core.EvidenceTests) ... ok
+test_sources_and_opposing_evidence (test_core.EvidenceTests) ... ok
+test_staleness_is_explicit (test_core.EvidenceTests) ... ok
+test_successful_ai_selection_has_no_free_prose (test_core.EvidenceTests) ... ok
+test_trade_request_boundary (test_core.EvidenceTests) ... ok
+test_zero_or_negative_growth_base (test_core.EvidenceTests) ... ok
+test_english_onboarding_and_export_are_offline_and_complete_when_filtered (test_international_experience.InternationalExperienceTests) ... 2026-11-11 21:21:09.081 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_english_scope_uses_words_without_accidental_pe_matches (test_international_experience.InternationalExperienceTests) ... ok
+test_language_switch_preserves_review_task_and_custom_question (test_international_experience.InternationalExperienceTests) ... 2026-11-11 21:21:09.975 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_no_key_english_mode_does_not_claim_ai_success (test_international_experience.InternationalExperienceTests) ... 2026-11-11 21:21:11.829 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_previously_formatted_browser_labels_are_normalized_before_filtering (test_international_experience.InternationalExperienceTests) ... 2026-11-11 21:21:12.700 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-11-11 21:21:13.304 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-11-11 21:21:13.304 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_translations_preserve_canonical_ids_sources_fields_and_data (test_international_experience.InternationalExperienceTests) ... ok
+test_brief_prefers_asked_dimension_and_has_only_known_claims (test_phase2.PhaseTwoEvidenceTests) ... ok
+test_company_name_does_not_trigger_valuation_dimension (test_phase2.PhaseTwoEvidenceTests) ... ok
+test_inconsistent_valuation_and_periods_fail_closed (test_phase2.PhaseTwoEvidenceTests) ... ok
+test_market_hash_survives_windows_linux_line_ending_conversion (test_phase2.PhaseTwoEvidenceTests) ... ok
+test_market_range_and_no_live_quote_leakage (test_phase2.PhaseTwoEvidenceTests) ... ok
+test_peer_comparison_and_negative_cashflow (test_phase2.PhaseTwoEvidenceTests) ... ok
+test_raw_response_hash_matches_manifest (test_phase2.PhaseTwoEvidenceTests) ... ok
+test_sources_include_original_pdf_page_and_sha (test_phase2.PhaseTwoEvidenceTests) ... ok
+test_tampered_market_csv_is_rejected (test_phase2.PhaseTwoEvidenceTests) ... ok
+test_ttm_uses_full_year_minus_previous_half_plus_current_half (test_phase2.PhaseTwoEvidenceTests) ... ok
+test_valuation_does_not_claim_official_or_cheapest (test_phase2.PhaseTwoEvidenceTests) ... ok
+test_bad_event_paragraph_is_withheld_without_losing_valid_analysis (test_phase3.SubmissionTests) ... ok
+test_curated_validator_regression (test_phase3.SubmissionTests) ... ok
+test_declared_citation_formatting_does_not_hide_financial_numbers (test_phase3.SubmissionTests) ... ok
+test_policy_changes_invalidate_cached_analysis (test_phase3.SubmissionTests) ... ok
+test_readable_export_keeps_ai_citations_when_visual_filter_hides_cards (test_phase3.SubmissionTests) ... 2026-11-11 21:21:13.544 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_account_errors_never_trigger_backup (test_request_gate.RequestGateTests) ... ok
+test_backup_overload_stops_at_two_requests_then_cools_down (test_request_gate.RequestGateTests) ... ok
+test_concurrent_sessions_share_one_inflight_request (test_request_gate.RequestGateTests) ... ok
+test_duplicate_success_uses_cache_with_correct_invalidation (test_request_gate.RequestGateTests) ... ok
+test_identifiers_do_not_store_keys_or_question_and_cache_is_bounded (test_request_gate.RequestGateTests) ... ok
+test_overload_uses_one_sequential_free_backup_and_caches_actual_model (test_request_gate.RequestGateTests) ... ok
+test_rate_limit_cooldown_is_local_and_never_auto_retries (test_request_gate.RequestGateTests) ... ok
+test_timeout_releases_lock_but_preserves_cooldown (test_request_gate.RequestGateTests) ... ok
+test_unexpected_failure_does_not_leave_busy_lock (test_request_gate.RequestGateTests) ... ok
+test_ai_review_remains_available_when_visual_filter_hides_the_cited_card (test_reviews.ReviewPageTests) ... 2026-11-11 21:21:14.665 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_missing_basis_does_not_create_review (test_reviews.ReviewPageTests) ... 2026-11-11 21:21:15.709 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_review_save_exports_and_question_change_marks_history_stale (test_reviews.ReviewPageTests) ... 2026-11-11 21:21:16.460 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_changed_interpretation_cannot_inherit_an_old_judgement (test_reviews.ReviewRecordsTests) ... ok
+test_insufficient_evidence_requires_missing_material_not_fabricated_locator (test_reviews.ReviewRecordsTests) ... ok
+test_invalid_status_is_rejected (test_reviews.ReviewRecordsTests) ... ok
+test_meaningful_context_changes_invalidate_but_order_does_not (test_reviews.ReviewRecordsTests) ... ok
+test_pending_is_not_automatically_verified (test_reviews.ReviewRecordsTests) ... ok
+test_revisions_keep_history_and_return_detached_copies (test_reviews.ReviewRecordsTests) ... ok
+test_support_requires_locator_note_and_a_real_cited_source (test_reviews.ReviewRecordsTests) ... ok
+test_no_key_bad_provider_and_paid_model_make_no_request (test_zhipu.ZhipuTests) ... ok
+test_output_diagnostics_never_echo_arbitrary_exception_text (test_zhipu.ZhipuTests) ... ok
+test_page_cited_analysis_and_missing_zhipu_key (test_zhipu.ZhipuTests) ... 2026-11-11 21:21:17.682 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_redirect_does_not_forward_key (test_zhipu.ZhipuTests) ... ok
+test_separate_credentials_and_pinned_free_model (test_zhipu.ZhipuTests) ... ok
+test_unknown_citations_numbers_advice_and_fake_fact_fail_closed (test_zhipu.ZhipuTests) ... ok
+test_zhipu_business_errors_are_safe_and_distinct (test_zhipu.ZhipuTests) ... ok
+test_zhipu_request_and_cited_interpretation (test_zhipu.ZhipuTests) ... ok
+
+----------------------------------------------------------------------
+Ran 75 tests in 15.578s
+
+OK

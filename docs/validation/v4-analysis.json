@@ -1,0 +1,93 @@
+{
+  "kind": "offline_validator_regression",
+  "model_calls": 0,
+  "limitation": "固定样本的校验回归，不代表真实模型准确率或完整语义核验。",
+  "total": 12,
+  "passed": 12,
+  "cases": [
+    {
+      "id": "cashflow_boundary",
+      "expected": "accept",
+      "actual": "accept",
+      "passed": true,
+      "reason": ""
+    },
+    {
+      "id": "event_unknown",
+      "expected": "accept",
+      "actual": "accept",
+      "passed": true,
+      "reason": ""
+    },
+    {
+      "id": "valuation_unknown",
+      "expected": "accept",
+      "actual": "accept",
+      "passed": true,
+      "reason": ""
+    },
+    {
+      "id": "peer_sample",
+      "expected": "accept",
+      "actual": "accept",
+      "passed": true,
+      "reason": ""
+    },
+    {
+      "id": "live_bad_event_from_old_cashflow",
+      "expected": "reject",
+      "actual": "reject",
+      "passed": true,
+      "reason": "event_grounding"
+    },
+    {
+      "id": "event_size_without_post_data",
+      "expected": "reject",
+      "actual": "reject",
+      "passed": true,
+      "reason": "event_effect_unknown"
+    },
+    {
+      "id": "event_explains_earlier_period",
+      "expected": "reject",
+      "actual": "reject",
+      "passed": true,
+      "reason": "event_timing"
+    },
+    {
+      "id": "new_financial_number",
+      "expected": "reject",
+      "actual": "reject",
+      "passed": true,
+      "reason": "extra_numbers_or_markup"
+    },
+    {
+      "id": "trading_advice",
+      "expected": "reject",
+      "actual": "reject",
+      "passed": true,
+      "reason": "trade_advice"
+    },
+    {
+      "id": "hallucinated_citation",
+      "expected": "reject",
+      "actual": "reject",
+      "passed": true,
+      "reason": "unknown_citation"
+    },
+    {
+      "id": "model_claims_fact",
+      "expected": "reject",
+      "actual": "reject",
+      "passed": true,
+      "reason": "inference_label"
+    },
+    {
+      "id": "certainty_without_boundary",
+      "expected": "reject",
+      "actual": "reject",
+      "passed": true,
+      "reason": "missing_uncertainty"
+    }
+  ]
+}

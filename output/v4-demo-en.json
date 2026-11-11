@@ -1,0 +1,684 @@
+{
+  "question": "Why did profit fall while operating cash flow surged?",
+  "company": "600519.SH",
+  "mode": "规则模式",
+  "dataset_version": "2.0",
+  "app_version": "4.0",
+  "language": "en",
+  "claim_review": {
+    "review_schema_version": "0.1",
+    "claims": [
+      {
+        "claim_id": "64fd2c321b882b4d4b3ceb28e097bf8ddce80cb6825da9c11ec377a3e9a442a2",
+        "content_fingerprint": "64fd2c321b882b4d4b3ceb28e097bf8ddce80cb6825da9c11ec377a3e9a442a2",
+        "origin": "本地推断卡",
+        "text": "收入增长、归母利润下降、经营现金流上升同时出现。现金流包含财务公司资金变化，不能直接认定白酒主业经营质量全面改善。",
+        "evidence_ids": [
+          "E4"
+        ],
+        "review": {
+          "review_schema_version": "0.1",
+          "review_id": "cd5d1d37-00ac-463c-a18d-b5293d208ac7",
+          "claim_id": "64fd2c321b882b4d4b3ceb28e097bf8ddce80cb6825da9c11ec377a3e9a442a2",
+          "content_fingerprint": "64fd2c321b882b4d4b3ceb28e097bf8ddce80cb6825da9c11ec377a3e9a442a2",
+          "origin": "本地推断卡",
+          "text": "收入增长、归母利润下降、经营现金流上升同时出现。现金流包含财务公司资金变化，不能直接认定白酒主业经营质量全面改善。",
+          "evidence_ids": [
+            "E4"
+          ],
+          "status": "证据不足",
+          "basis": [],
+          "missing_material": "Functional demo only: need a breakdown of core-business collections and finance-subsidiary fund movements.",
+          "review_origin": "user_manual",
+          "reviewed_at": "2026-11-11T13:12:29.705039+00:00"
+        },
+        "status": "证据不足"
+      },
+      {
+        "claim_id": "480a92407ab5ea41a60547a142b1551c6b18db25c8ad3ef6404903690ea984ea",
+        "content_fingerprint": "480a92407ab5ea41a60547a142b1551c6b18db25c8ad3ef6404903690ea984ea",
+        "origin": "本地推断卡",
+        "text": "以2026-10-15收盘价和2026-06-30股本试算：PE(TTM) 20.16倍，PB 6.53倍。未核验期间股本变化，不是官方当日估值。",
+        "evidence_ids": [
+          "E8"
+        ],
+        "review": null,
+        "status": "待复核"
+      },
+      {
+        "claim_id": "4cc8e9f78303b4b69236783705a217ead3157d9c372bf8865427a33ab2bf52fe",
+        "content_fingerprint": "4cc8e9f78303b4b69236783705a217ead3157d9c372bf8865427a33ab2bf52fe",
+        "origin": "本地推断卡",
+        "text": "五粮液归母利润同比上升，但经营现金流转负；茅台归母利润同比下降，而经营现金流大增。两者均不能只用单个增幅概括经营质量。",
+        "evidence_ids": [
+          "E12"
+        ],
+        "review": null,
+        "status": "待复核"
+      }
+    ],
+    "history": [
+      {
+        "review_schema_version": "0.1",
+        "review_id": "cd5d1d37-00ac-463c-a18d-b5293d208ac7",
+        "claim_id": "64fd2c321b882b4d4b3ceb28e097bf8ddce80cb6825da9c11ec377a3e9a442a2",
+        "content_fingerprint": "64fd2c321b882b4d4b3ceb28e097bf8ddce80cb6825da9c11ec377a3e9a442a2",
+        "origin": "本地推断卡",
+        "text": "收入增长、归母利润下降、经营现金流上升同时出现。现金流包含财务公司资金变化，不能直接认定白酒主业经营质量全面改善。",
+        "evidence_ids": [
+          "E4"
+        ],
+        "status": "证据不足",
+        "basis": [],
+        "missing_material": "Functional demo only: need a breakdown of core-business collections and finance-subsidiary fund movements.",
+        "review_origin": "user_manual",
+        "reviewed_at": "2026-11-11T13:12:29.705039+00:00",
+        "validity": "当前有效"
+      }
+    ]
+  },
+  "verified_at": "2026-10-16T09:11:27+00:00",
+  "dimensions": [
+    "经营质量",
+    "财务趋势",
+    "估值",
+    "行情特征",
+    "行业位置",
+    "重要事件与风险"
+  ],
+  "evidence": [
+    {
+      "id": "E1",
+      "dimension": "财务趋势",
+      "kind": "事实",
+      "direction": "正面",
+      "title": "营业收入仍有增长",
+      "body": "2026H1营业收入 907.03 亿元，同比 +1.47%。",
+      "source": "S1",
+      "fields": [
+        "revenue"
+      ],
+      "formula": "(本期营业收入 / 上年同期营业收入 - 1) × 100%",
+      "next_step": "拆分销量、吨价、产品和渠道变化，验证增长来源。"
+    },
+    {
+      "id": "E2",
+      "dimension": "财务趋势",
+      "kind": "事实",
+      "direction": "负面",
+      "title": "归母净利润同比下降",
+      "body": "2026H1归母净利润 445.17 亿元，同比 -1.95%。",
+      "source": "S1",
+      "fields": [
+        "profit_parent"
+      ],
+      "formula": "(本期归母净利润 / 上年同期归母净利润 - 1) × 100%",
+      "next_step": "检查营业成本、税金及产品结构，不能将利润下降等同于收入萎缩。"
+    },
+    {
+      "id": "E3",
+      "dimension": "经营质量",
+      "kind": "事实",
+      "direction": "正面",
+      "title": "经营现金流净额上升",
+      "body": "2026H1合并经营现金流净额 706.91 亿元，同比 +438.84%。",
+      "source": "S1",
+      "fields": [
+        "operating_cashflow"
+      ],
+      "formula": "(本期经营现金流 / 上年同期经营现金流 - 1) × 100%",
+      "next_step": "先看财务公司存款和同业款项变化，再判断主业回款。"
+    },
+    {
+      "id": "E4",
+      "dimension": "经营质量",
+      "kind": "推断",
+      "direction": "矛盾",
+      "title": "现金流增强与盈利走弱并存",
+      "body": "收入增长、归母利润下降、经营现金流上升同时出现。现金流包含财务公司资金变化，不能直接认定白酒主业经营质量全面改善。",
+      "source": "S1",
+      "fields": [
+        "revenue",
+        "profit_parent",
+        "operating_cashflow"
+      ],
+      "formula": "联合核对E1、E2、E3及公司对现金流的解释；非因果证明",
+      "next_step": "追查现金流附注与销售收现，区分主业和财务子公司贡献。"
+    },
+    {
+      "id": "E5",
+      "dimension": "经营质量",
+      "kind": "事实",
+      "direction": "负面",
+      "title": "营业收入口径毛利率下降",
+      "body": "按营业收入与营业成本计算：91.30% → 89.56%，变化 -1.74 个百分点。",
+      "source": "S1",
+      "fields": [
+        "revenue",
+        "cost"
+      ],
+      "formula": "(1 - 营业成本 / 营业收入) × 100%；不含利息收入，不是净利率",
+      "next_step": "继续核对产品结构与成本变化；两个半年期不能代表长期趋势。"
+    },
+    {
+      "id": "E6",
+      "dimension": "重要事件与风险",
+      "kind": "事实",
+      "direction": "中性",
+      "title": "飞天指定产品调整价格",
+      "body": "2026-07-18起，指定飞天产品i茅台零售价1539→1639元/瓶，销售合同价1269→1369元/瓶。",
+      "source": "S2",
+      "fields": [
+        "retail_before",
+        "retail_after",
+        "contract_before",
+        "contract_after"
+      ],
+      "formula": "公告原始价格字段；限定产品、规格、渠道",
+      "next_step": "调价发生在半年报期末之后，验证后续销量与执行情况，不能倒推其影响2026H1。"
+    },
+    {
+      "id": "E7",
+      "dimension": "重要事件与风险",
+      "kind": "未知",
+      "direction": "未知",
+      "title": "调价的利润兑现尚待验证",
+      "body": "公告说明价格调整将影响经营业绩，但本证据包没有调价后的销量、渠道库存和完整财务期次。",
+      "source": "S2",
+      "fields": [],
+      "formula": "不以价格变化线性外推利润",
+      "next_step": "获取后续季报、经营数据和执行公告；将传闻与公司披露分别核验。"
+    },
+    {
+      "id": "E8",
+      "dimension": "估值",
+      "kind": "推断",
+      "direction": "中性",
+      "title": "历史估值口径试算",
+      "body": "以2026-10-15收盘价和2026-06-30股本试算：PE(TTM) 20.16倍，PB 6.53倍。未核验期间股本变化，不是官方当日估值。",
+      "source": "S4",
+      "fields": [],
+      "formula": "TTM归母利润 = 2025FY - 2025H1 + 2026H1；试算市值 = 10月15日收盘价 × 6月30日股本；PE = 试算市值 / TTM归母利润；PB = 试算市值 / 6月30日归母净资产",
+      "next_step": "核验估值日实际总股本、期间分红与回购；补足历史分位和同行估值后再讨论估值判断。",
+      "sources": [
+        "S1",
+        "S3",
+        "S4"
+      ]
+    },
+    {
+      "id": "E9",
+      "dimension": "行情特征",
+      "kind": "事实",
+      "direction": "中性",
+      "title": "历史区间行情已有可追溯来源",
+      "body": "腾讯证券不复权快照：2026-09-01至2026-10-15，共27个观测点，首尾价格变化+1.03%，样本内最大回撤-7.10%。非股息总回报。",
+      "source": "S3",
+      "fields": [],
+      "formula": "价格变化 = 期末收盘价 / 期初收盘价 - 1；最大回撤 = min(收盘价 / 截至当日最高收盘价 - 1)",
+      "next_step": "在行情与估值页检查日期区间和原始行情；继续核验交易日覆盖、复权及第二数据来源。"
+    },
+    {
+      "id": "E10",
+      "dimension": "行业位置",
+      "kind": "事实",
+      "direction": "中性",
+      "title": "同行对比限定为两家公司样本",
+      "body": "2026H1营业收入：贵州茅台907.03亿元，五粮液284.17亿元。同期合并口径，不能据此推为全行业排名。",
+      "source": "S5",
+      "fields": [],
+      "formula": "分别提取两家公司2026H1合并营业收入、归母利润和经营现金流；金额元 / 1亿",
+      "next_step": "在同行对比页检查基数、产品与渠道差异；扩大样本后再判断行业位置。",
+      "sources": [
+        "S1",
+        "S5"
+      ]
+    },
+    {
+      "id": "E11",
+      "dimension": "估值",
+      "kind": "未知",
+      "direction": "未知",
+      "title": "估值高低仍无充分证据",
+      "body": "试算倍数不代表便宜或昂贵；缺少已核验的估值日总股本、历史分位和同日同行估值。",
+      "source": "",
+      "fields": [],
+      "formula": "假设有明确边界，不能将试算结果包装成当日官方PE/PB。",
+      "next_step": "获取当日股本、历史估值与同行数据，比较盈利口径和风险假设。"
+    },
+    {
+      "id": "E12",
+      "dimension": "行业位置",
+      "kind": "推断",
+      "direction": "矛盾",
+      "title": "样本内盈利与现金流表现并不同向",
+      "body": "五粮液归母利润同比上升，但经营现金流转负；茅台归母利润同比下降，而经营现金流大增。两者均不能只用单个增幅概括经营质量。",
+      "source": "S5",
+      "sources": [
+        "S1",
+        "S5"
+      ],
+      "fields": [],
+      "formula": "核对同期财务字段及两家公司对现金流变化的说明，不证明经营因果。",
+      "next_step": "对照两家公司财报解释：财务公司资金变化、收款政策和承兑汇票。"
+    }
+  ],
+  "visible_evidence_ids": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5",
+    "E6",
+    "E7",
+    "E8",
+    "E9",
+    "E10",
+    "E11",
+    "E12"
+  ],
+  "sources": [
+    {
+      "id": "S1",
+      "title": "贵州茅台2026年半年度报告（未经审计）",
+      "url": "https://static.cninfo.com.cn/finalpage/2026-08-15/1225475868.PDF",
+      "original_url": "https://static.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-08-15/600519_20260815_UXBN.pdf",
+      "disclosed_at": "2026-08-15",
+      "period": "2026-01-01 / 2026-06-30",
+      "locator": "PDF第5页：主要会计数据；第7页：财务报表相关科目变动分析",
+      "verification": "已下载巨潮原始PDF，提取并视觉核对第5、7页，与公告全文转载一致。",
+      "unit": "人民币元",
+      "scope": "合并口径；归母净利润单列，营业收入不含利息收入",
+      "mirror_url": "https://money.finance.sina.com.cn/corp/view/vCB_AllBulletinDetail.php?id=12496833&stockid=600519",
+      "sha256": "0e10aa26be46b1cf3cd03f06e834c7fb98d5dd0d661b96f8fddd4af7e846a4f6"
+    },
+    {
+      "id": "S2",
+      "title": "贵州茅台重大事项公告（临2026-028）",
+      "url": "https://epaper.cs.com.cn/zgzqb/html/2026-07/18/nw.D110000zgzqb_20260718_1-B052.htm",
+      "disclosed_at": "2026-07-18",
+      "effective_at": "2026-07-18T00:00:00+08:00",
+      "locator": "中国证券报 B052版，公告正文价格调整段",
+      "retail_before": 1539,
+      "retail_after": 1639,
+      "contract_before": 1269,
+      "contract_after": 1369,
+      "unit": "元/瓶",
+      "scope": "飞天53%vol 500ml贵州茅台酒（2026）；i茅台零售价与销售合同价，非全产品提价"
+    },
+    {
+      "id": "S3",
+      "title": "腾讯证券 · 贵州茅台历史日线冻结快照",
+      "url": "https://gu.qq.com/sh600519/gp",
+      "endpoint": "https://proxy.finance.qq.com/ifzqgtimg/appstock/app/newfqkline/get?param=sh600519,day,2026-09-01,2026-10-15,60,",
+      "disclosed_at": "2026-10-15",
+      "fetched_at": "2026-10-16T09:02:02+00:00",
+      "period": "2026-09-01 / 2026-10-15",
+      "locator": "data.sh600519.day；本地严格筛选date范围，忽略返回的实时qt字段",
+      "unit": "价格元 / 成交量股 / 成交额元",
+      "scope": "非复权日线；上交所主板成交量由手×100换算为股，成交额由万元×10000换算为元",
+      "mapping_reference": "https://github.com/akfamily/akshare/blob/main/akshare/stock_feature/stock_hist_tx.py",
+      "sha256": "d8c4b6071b18d08f1ff238f9f3adb7b1f42f94cd60e903d6359c792165ef6716",
+      "csv_sha256": "c80b76f98ea3fafe30c16d7aa5bc30cfb7e1ee20ae21623dfeb9c15532e11821",
+      "csv_hash_canonicalization": "LF line endings",
+      "raw_file": "raw/maotai_qq_20261016.json"
+    },
+    {
+      "id": "S4",
+      "title": "贵州茅台2025年年度报告",
+      "url": "https://static.cninfo.com.cn/finalpage/2026-04-17/1225114741.PDF",
+      "disclosed_at": "2026-04-17",
+      "period": "2025-01-01 / 2025-12-31",
+      "locator": "PDF第6页：近三年主要会计数据",
+      "unit": "人民币元",
+      "scope": "合并营业收入、归母净利润；年度报告",
+      "sha256": "474905deeaf0f875fc0a1b097a626c0c7852c427faadc5d7fc7816cbf45ea288"
+    },
+    {
+      "id": "S5",
+      "title": "五粮液2026年半年度报告",
+      "url": "https://static.cninfo.com.cn/finalpage/2026-08-29/1225531252.PDF",
+      "disclosed_at": "2026-08-29",
+      "period": "2026-01-01 / 2026-06-30",
+      "locator": "PDF第6–7页：主要会计数据及注1、注2",
+      "unit": "人民币元",
+      "scope": "合并口径，归母净利润单列；上年同期列为2025H1",
+      "sha256": "15153679faee48d1b1b00c50557a88bdcbdf8cb4cbc49b8762e10f70210dfb5b"
+    }
+  ],
+  "valuation_assumptions": {
+    "as_of": "2026-10-15",
+    "price": 1312.97,
+    "shares": 1250081601,
+    "shares_as_of": "2026-06-30",
+    "equity_parent": 251253594419.5,
+    "equity_as_of": "2026-06-30",
+    "ttm_start": "2025-07-01",
+    "ttm_end": "2026-06-30",
+    "status": "试算",
+    "assumption": "沿用2026-06-30期末股本，尚未核验期末至估值日的股本变化；因此仅为历史口径试算，非当日官方PE/PB。",
+    "sources": [
+      "S1",
+      "S3",
+      "S4"
+    ]
+  },
+  "research_tasks": [
+    {
+      "evidence_id": "E1",
+      "task": "拆分销量、吨价、产品和渠道变化，验证增长来源。",
+      "status": "待核对"
+    },
+    {
+      "evidence_id": "E2",
+      "task": "检查营业成本、税金及产品结构，不能将利润下降等同于收入萎缩。",
+      "status": "待核对"
+    },
+    {
+      "evidence_id": "E3",
+      "task": "先看财务公司存款和同业款项变化，再判断主业回款。",
+      "status": "待核对"
+    },
+    {
+      "evidence_id": "E4",
+      "task": "追查现金流附注与销售收现，区分主业和财务子公司贡献。",
+      "status": "待核对"
+    },
+    {
+      "evidence_id": "E5",
+      "task": "继续核对产品结构与成本变化；两个半年期不能代表长期趋势。",
+      "status": "待核对"
+    },
+    {
+      "evidence_id": "E6",
+      "task": "调价发生在半年报期末之后，验证后续销量与执行情况，不能倒推其影响2026H1。",
+      "status": "待核对"
+    },
+    {
+      "evidence_id": "E7",
+      "task": "获取后续季报、经营数据和执行公告；将传闻与公司披露分别核验。",
+      "status": "待核对"
+    },
+    {
+      "evidence_id": "E8",
+      "task": "核验估值日实际总股本、期间分红与回购；补足历史分位和同行估值后再讨论估值判断。",
+      "status": "待核对"
+    },
+    {
+      "evidence_id": "E9",
+      "task": "在行情与估值页检查日期区间和原始行情；继续核验交易日覆盖、复权及第二数据来源。",
+      "status": "待核对"
+    },
+    {
+      "evidence_id": "E10",
+      "task": "在同行对比页检查基数、产品与渠道差异；扩大样本后再判断行业位置。",
+      "status": "待核对"
+    },
+    {
+      "evidence_id": "E11",
+      "task": "获取当日股本、历史估值与同行数据，比较盈利口径和风险假设。",
+      "status": "待核对"
+    },
+    {
+      "evidence_id": "E12",
+      "task": "对照两家公司财报解释：财务公司资金变化、收款政策和承兑汇票。",
+      "status": "待核对"
+    }
+  ],
+  "limitations": "冻结证据包；估值为有假设的历史试算；非实时诊断，不提供投资建议",
+  "ai_provider": "openai",
+  "ai_model": "gpt-4.1-mini",
+  "ai_interpretations": [],
+  "analysis_checks": {},
+  "ai_research_questions": [],
+  "ai_request": {},
+  "api_diagnostic": {},
+  "presentation": {
+    "evidence": [
+      {
+        "id": "E1",
+        "dimension": "财务趋势",
+        "kind": "事实",
+        "direction": "正面",
+        "title": "Revenue increased",
+        "body": "2026H1 revenue was CNY 90.70bn, +1.47% year on year.",
+        "source": "S1",
+        "fields": [
+          "revenue"
+        ],
+        "formula": "(Current revenue / prior-year comparable revenue - 1) × 100%",
+        "next_step": "Separate volume, unit price, product mix and channel changes to investigate growth."
+      },
+      {
+        "id": "E2",
+        "dimension": "财务趋势",
+        "kind": "事实",
+        "direction": "负面",
+        "title": "Profit attributable to owners declined",
+        "body": "2026H1 profit attributable to owners was CNY 44.52bn, -1.95% year on year.",
+        "source": "S1",
+        "fields": [
+          "profit_parent"
+        ],
+        "formula": "(Current parent profit / prior-year comparable parent profit - 1) × 100%",
+        "next_step": "Check operating costs, taxes and product mix. Falling profit does not imply falling revenue."
+      },
+      {
+        "id": "E3",
+        "dimension": "经营质量",
+        "kind": "事实",
+        "direction": "正面",
+        "title": "Operating cash flow increased",
+        "body": "2026H1 consolidated net operating cash flow was CNY 70.69bn, +438.84% year on year.",
+        "source": "S1",
+        "fields": [
+          "operating_cashflow"
+        ],
+        "formula": "(Current operating cash flow / prior-year comparable cash flow - 1) × 100%",
+        "next_step": "Inspect finance-subsidiary deposits and interbank funds before judging core-business collections."
+      },
+      {
+        "id": "E4",
+        "dimension": "经营质量",
+        "kind": "推断",
+        "direction": "矛盾",
+        "title": "Stronger cash flow, weaker profitability",
+        "body": "Revenue growth, declining parent profit and rising operating cash flow coexist. Cash flow includes finance-subsidiary fund movements; it does not establish a broad improvement in the liquor business.",
+        "source": "S1",
+        "fields": [
+          "revenue",
+          "profit_parent",
+          "operating_cashflow"
+        ],
+        "formula": "Cross-check E1, E2, E3 and the company's cash flow explanation. This is not causal proof.",
+        "next_step": "Inspect cash flow notes and cash collected from sales; separate the core business and finance subsidiary."
+      },
+      {
+        "id": "E5",
+        "dimension": "经营质量",
+        "kind": "事实",
+        "direction": "负面",
+        "title": "Revenue-based gross margin declined",
+        "body": "Computed from revenue and operating cost: 91.30% → 89.56%, a change of -1.74 percentage points.",
+        "source": "S1",
+        "fields": [
+          "revenue",
+          "cost"
+        ],
+        "formula": "(1 - Operating cost / revenue) × 100%. Excludes interest income; not net margin.",
+        "next_step": "Check product mix and cost changes. Two half-year periods do not establish a long-term trend."
+      },
+      {
+        "id": "E6",
+        "dimension": "重要事件与风险",
+        "kind": "事实",
+        "direction": "中性",
+        "title": "Price adjustment for specified Feitian products",
+        "body": "Effective 2026-07-18: specified iMoutai retail price CNY 1539 → 1639/bottle; sales contract price CNY 1269 → 1369/bottle.",
+        "source": "S2",
+        "fields": [
+          "retail_before",
+          "retail_after",
+          "contract_before",
+          "contract_after"
+        ],
+        "formula": "Original announcement price fields, limited to specified products, specifications and channels.",
+        "next_step": "The adjustment follows the half-year end. Verify subsequent volume and execution; it cannot explain 2026H1 results."
+      },
+      {
+        "id": "E7",
+        "dimension": "重要事件与风险",
+        "kind": "未知",
+        "direction": "未知",
+        "title": "Earnings impact remains unverified",
+        "body": "The announcement says the adjustment will affect performance. This evidence pack has no post-adjustment sales volumes, channel inventories or complete financial period.",
+        "source": "S2",
+        "fields": [],
+        "formula": "Do not extrapolate price changes linearly into profit.",
+        "next_step": "Obtain later reports, operating data and execution disclosures; verify rumours separately."
+      },
+      {
+        "id": "E8",
+        "dimension": "估值",
+        "kind": "推断",
+        "direction": "中性",
+        "title": "Historical valuation with explicit assumptions",
+        "body": "Using the 2026-10-15 close and 2026-06-30 shares: estimated PE(TTM) 20.16× and PB 6.53×. Intervening share changes are unverified; these are not official daily valuations.",
+        "source": "S4",
+        "fields": [],
+        "formula": "TTM parent profit = 2025FY - 2025H1 + 2026H1. Estimated market cap = historical price × period-end shares. PE = estimated cap / TTM parent profit; PB = estimated cap / period-end parent equity.",
+        "next_step": "Verify shares on the valuation date, dividends and buybacks; add historical percentiles and peer valuations.",
+        "sources": [
+          "S1",
+          "S3",
+          "S4"
+        ]
+      },
+      {
+        "id": "E9",
+        "dimension": "行情特征",
+        "kind": "事实",
+        "direction": "中性",
+        "title": "Traceable historical price observations",
+        "body": "Tencent unadjusted snapshot: 2026-09-01 to 2026-10-15, 27 observations. Endpoint price change +1.03%; sample maximum drawdown -7.10%. Excludes dividends.",
+        "source": "S3",
+        "fields": [],
+        "formula": "Price change = final close / first close - 1. Maximum drawdown = min(close / running peak close - 1).",
+        "next_step": "Check dates and raw observations; verify trading-calendar coverage, adjustments and a second source."
+      },
+      {
+        "id": "E10",
+        "dimension": "行业位置",
+        "kind": "事实",
+        "direction": "中性",
+        "title": "Peer comparison covers two companies only",
+        "body": "2026H1 revenue: Kweichow Moutai CNY 90.70bn; Wuliangye CNY 28.42bn. Comparable consolidated periods, not an industry ranking.",
+        "source": "S5",
+        "fields": [],
+        "formula": "Extract 2026H1 consolidated revenue, parent profit and net operating cash flow for each company.",
+        "next_step": "Check comparison bases, products and channels; broaden the sample before assessing industry position.",
+        "sources": [
+          "S1",
+          "S5"
+        ]
+      },
+      {
+        "id": "E11",
+        "dimension": "估值",
+        "kind": "未知",
+        "direction": "未知",
+        "title": "Insufficient evidence to judge valuation",
+        "body": "Estimated multiples do not establish cheapness or expensiveness. Verified valuation-date shares, historical percentiles and same-date peer valuations are missing.",
+        "source": "",
+        "fields": [],
+        "formula": "Assumptions have limits. Do not present estimates as official daily PE/PB.",
+        "next_step": "Obtain same-date shares, valuation history and peer data; compare earnings definitions and risk assumptions."
+      },
+      {
+        "id": "E12",
+        "dimension": "行业位置",
+        "kind": "推断",
+        "direction": "矛盾",
+        "title": "Profit and cash flow diverge across the sample",
+        "body": "Wuliangye's parent profit rose while operating cash flow turned negative. Moutai's parent profit fell while cash flow surged. A single growth rate cannot summarise operating quality.",
+        "source": "S5",
+        "sources": [
+          "S1",
+          "S5"
+        ],
+        "fields": [],
+        "formula": "Check comparable financial fields and both companies' cash flow explanations. No causal proof.",
+        "next_step": "Compare finance-subsidiary fund movements, collection policies and bank acceptance bills."
+      }
+    ],
+    "sources": [
+      {
+        "id": "S1",
+        "title": "Kweichow Moutai 2026 interim report (unaudited)",
+        "url": "https://static.cninfo.com.cn/finalpage/2026-08-15/1225475868.PDF",
+        "original_url": "https://static.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-08-15/600519_20260815_UXBN.pdf",
+        "disclosed_at": "2026-08-15",
+        "period": "2026-01-01 / 2026-06-30",
+        "locator": "PDF p.5: key accounting data; p.7: changes in financial statement items",
+        "verification": "已下载巨潮原始PDF，提取并视觉核对第5、7页，与公告全文转载一致。",
+        "unit": "CNY",
+        "scope": "Consolidated; parent profit separately identified; revenue excludes interest income",
+        "mirror_url": "https://money.finance.sina.com.cn/corp/view/vCB_AllBulletinDetail.php?id=12496833&stockid=600519",
+        "sha256": "0e10aa26be46b1cf3cd03f06e834c7fb98d5dd0d661b96f8fddd4af7e846a4f6"
+      },
+      {
+        "id": "S2",
+        "title": "Kweichow Moutai material announcement (2026-028)",
+        "url": "https://epaper.cs.com.cn/zgzqb/html/2026-07/18/nw.D110000zgzqb_20260718_1-B052.htm",
+        "disclosed_at": "2026-07-18",
+        "effective_at": "2026-07-18T00:00:00+08:00",
+        "locator": "China Securities Journal, B052, price-adjustment paragraph",
+        "retail_before": 1539,
+        "retail_after": 1639,
+        "contract_before": 1269,
+        "contract_after": 1369,
+        "unit": "CNY per bottle",
+        "scope": "Specified Feitian 53%vol 500ml (2026) products; iMoutai retail and contract prices only"
+      },
+      {
+        "id": "S3",
+        "title": "Tencent Securities · Moutai frozen historical daily prices",
+        "url": "https://gu.qq.com/sh600519/gp",
+        "endpoint": "https://proxy.finance.qq.com/ifzqgtimg/appstock/app/newfqkline/get?param=sh600519,day,2026-09-01,2026-10-15,60,",
+        "disclosed_at": "2026-10-15",
+        "fetched_at": "2026-10-16T09:02:02+00:00",
+        "period": "2026-09-01 / 2026-10-15",
+        "locator": "data.sh600519.day; local date filter; live qt fields excluded",
+        "unit": "Price CNY / volume shares / turnover CNY",
+        "scope": "Unadjusted; lots × 100 → shares; turnover in CNY 10,000 × 10,000 → CNY",
+        "mapping_reference": "https://github.com/akfamily/akshare/blob/main/akshare/stock_feature/stock_hist_tx.py",
+        "sha256": "d8c4b6071b18d08f1ff238f9f3adb7b1f42f94cd60e903d6359c792165ef6716",
+        "csv_sha256": "c80b76f98ea3fafe30c16d7aa5bc30cfb7e1ee20ae21623dfeb9c15532e11821",
+        "csv_hash_canonicalization": "LF line endings",
+        "raw_file": "raw/maotai_qq_20261016.json"
+      },
+      {
+        "id": "S4",
+        "title": "Kweichow Moutai 2025 annual report",
+        "url": "https://static.cninfo.com.cn/finalpage/2026-04-17/1225114741.PDF",
+        "disclosed_at": "2026-04-17",
+        "period": "2025-01-01 / 2025-12-31",
+        "locator": "PDF p.6: key accounting data for the last three years",
+        "unit": "CNY",
+        "scope": "Annual consolidated revenue and profit attributable to owners",
+        "sha256": "474905deeaf0f875fc0a1b097a626c0c7852c427faadc5d7fc7816cbf45ea288"
+      },
+      {
+        "id": "S5",
+        "title": "Wuliangye 2026 interim report",
+        "url": "https://static.cninfo.com.cn/finalpage/2026-08-29/1225531252.PDF",
+        "disclosed_at": "2026-08-29",
+        "period": "2026-01-01 / 2026-06-30",
+        "locator": "PDF pp.6–7: key accounting data and notes 1–2",
+        "unit": "CNY",
+        "scope": "Consolidated; parent profit separately identified; comparative column is 2025H1",
+        "sha256": "15153679faee48d1b1b00c50557a88bdcbdf8cb4cbc49b8762e10f70210dfb5b"
+      }
+    ]
+  }
+}

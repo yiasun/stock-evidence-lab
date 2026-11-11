@@ -1,0 +1,92 @@
+{
+  "checked_at_utc": "2026-11-11T13:21:22.352122+00:00",
+  "python": "3.10.0",
+  "platform": "Windows",
+  "packages": {
+    "streamlit": "1.65.0",
+    "pandas": "2.2.3",
+    "numpy": "2.1.2",
+    "requests": "2.32.3"
+  },
+  "checks": [
+    {
+      "check": "compile",
+      "command": [
+        "python",
+        "-m",
+        "compileall",
+        "-q",
+        "app.py",
+        "diagnosis.py",
+        "ai_layer.py",
+        "request_gate.py",
+        "research_export.py",
+        "review_records.py",
+        "presentation.py"
+      ],
+      "exit_code": 0,
+      "log": "v4-compile.txt"
+    },
+    {
+      "check": "unit",
+      "command": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "exit_code": 0,
+      "log": "v4-unit.txt"
+    },
+    {
+      "check": "analysis",
+      "command": [
+        "python",
+        "tools/evaluate_analysis.py",
+        "--output",
+        "docs/validation/v4-analysis.json"
+      ],
+      "exit_code": 0,
+      "log": "v4-analysis.txt"
+    },
+    {
+      "check": "boundary",
+      "command": [
+        "python",
+        "tools/evaluate_boundary_challenge.py",
+        "--output",
+        "docs/validation/v4-boundary.json"
+      ],
+      "exit_code": 0,
+      "log": "v4-boundary.txt"
+    },
+    {
+      "check": "whitespace",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "log": "v4-whitespace.txt"
+    }
+  ],
+  "model_calls": 0,
+  "sha256_lf_normalized": {
+    "app.py": "b3eef5e571fed7e9a0a3e05088703cfea43429628a9c101bbce4883057164ae4",
+    "diagnosis.py": "c6421f54a8b957ebc6e8e7f9267d70429edce89c5e15d6488674797b31e120c7",
+    "ai_layer.py": "dbab407813f8eb95452cc8d9cb2e379e8be0ad5045c387349475ecba55a3bb51",
+    "request_gate.py": "232e1556530dc57db577dc8aacab536c4fedd1a82afc52eed35bdfebb83faa0d",
+    "research_export.py": "faf0ce153d7ccc8fb6e4683c4abe32204cae59a737a278e380abdf3df13b335b",
+    "review_records.py": "0476415c5c20ffa0acccbb5c702d72d9bde33a083dd49a4e10b7048da6215bf0",
+    "presentation.py": "aaa80590a87a881122e4a0d482d3a588332221ba8c73dadb876dfccea352f5f3",
+    "styles.css": "119236ed5c75c38e4dc458008f570453c6ee0a580febfb8148f7818b92ace601",
+    "requirements.txt": "ee88641b259332557d019bcbc5fc5644c209c663d1291bb84355fb4cb0089b40",
+    "data/evidence.json": "6449014565664bbe5c3a01330f6d19223c01c22c7356020721af0c56eeeca1fd",
+    "data/market_verified.csv": "c80b76f98ea3fafe30c16d7aa5bc30cfb7e1ee20ae21623dfeb9c15532e11821"
+  },
+  "limits": "Unit tests use mocked AI calls. Offline authored fixtures are not live-model accuracy or user validation. Browser QA is recorded separately."
+}

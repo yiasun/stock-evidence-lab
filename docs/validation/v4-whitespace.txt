@@ -1,0 +1,4 @@
+warning: in the working copy of 'README.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'diagnosis.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tools/package_submission.py', LF will be replaced by CRLF the next time Git touches it

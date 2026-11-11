@@ -4,6 +4,7 @@ import io
 import json
 import math
 import hashlib
+import re
 from datetime import date
 from pathlib import Path
 import pandas as pd
@@ -18,6 +19,20 @@ KEYWORDS = {
     "行业位置": ["同行", "行业", "龙头", "五粮液", "份额", "排名"],
     "重要事件与风险": ["事件", "风险", "调价", "提价", "公告", "传闻"]
 }
+ENGLISH_KEYWORDS = {
+    "经营质量": ["operating", "quality", "margin", "cash", "cashflow", "channel", "collection"],
+    "财务趋势": ["financial", "growth", "revenue", "profit", "earnings", "cash", "cashflow"],
+    "估值": ["valuation", "cheap", "expensive", "overvalued", "undervalued", "pe", "pb"],
+    "行情特征": ["price history", "stock price", "volatility", "drawdown", "market price"],
+    "行业位置": ["peer", "peers", "industry", "wuliangye", "market share", "ranking"],
+    "重要事件与风险": ["event", "risk", "risks", "price adjustment", "price increase", "announcement", "rumour"],
+}
+
+
+def english_dimensions(question):
+    # Word boundaries prevent PE matching oPErating, exPEnsive or tyPE.
+    return [d for d, words in ENGLISH_KEYWORDS.items()
+            if any(re.search(r"\b" + re.escape(word) + r"\b", question, re.I) for word in words)]
 
 def load_data(path=ROOT / "data" / "evidence.json"):
     data = json.loads(Path(path).read_text(encoding="utf-8"))
@@ -54,7 +69,8 @@ def metrics(data):
 
 def select_dimensions(question):
     text = question.lower()
-    selected = [d for d, words in KEYWORDS.items() if any(w in text for w in words)]
+    selected = [d for d, words in KEYWORDS.items() if any(w in text for w in words if w not in ("pe", "pb"))]
+    selected += english_dimensions(text)
     if not selected:
         return DIMENSIONS.copy()
     if "经营质量" not in selected:
@@ -62,7 +78,8 @@ def select_dimensions(question):
     return [d for d in DIMENSIONS if d in selected]
 
 def is_trade_request(question):
-    return any(w in question.lower() for w in ["买入", "卖出", "买不买", "能买吗", "该买吗", "目标价", "翻倍", "稳赚", "荐股", "仓位", "buy", "sell"])
+    return any(w in question.lower() for w in ["买入", "卖出", "买不买", "能买吗", "该买吗", "目标价", "翻倍", "稳赚", "荐股", "仓位"]) or bool(
+        re.search(r"\b(buy|sell|price target|target price|position sizing|guaranteed returns?)\b", question, re.I))
 
 def _base_cards(data):
     m = metrics(data)
@@ -207,7 +224,8 @@ def research_brief(question, selected, evidence):
     preferred = select_dimensions(question)
     focus = [c for c in evidence if c["dimension"] in selected and c["dimension"] in preferred]
     # Every displayed sentence is an existing reviewed claim with an explicit ID.
-    direct = [d for d,words in KEYWORDS.items() if any(word in question.lower() for word in words)]
+    direct = [d for d,words in KEYWORDS.items() if any(word in question.lower() for word in words if word not in ("pe", "pb"))]
+    direct += english_dimensions(question)
     important = sorted(focus,key=lambda c: (0 if c["dimension"] in direct else 1,
         {"矛盾":0,"负面":1,"正面":2,"中性":3,"未知":4}[c["direction"]]))
     return {"focus":important[:3],"unknowns":[c for c in focus if c["kind"] == "未知"],

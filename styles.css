@@ -1,0 +1,33 @@
+<style>
+:root {--ink:#152c39;--teal:#006e69;--line:#dce4e4;--muted:#526976}
+.stApp {background:#f6f8f7;color:var(--ink)}
+.block-container {max-width:1216px;padding:2.6rem 2.4rem 4rem}
+h1 {font-size:clamp(2rem,3.3vw,3.2rem)!important;letter-spacing:-.045em;line-height:1.12!important;max-width:1000px}
+h2,h3,h4 {color:var(--ink);letter-spacing:-.02em}
+.eyebrow {color:var(--teal);font-size:11px;letter-spacing:.16em;font-weight:750;margin-bottom:18px}
+.hero-note {color:var(--muted);font-size:18px;line-height:1.6;max-width:830px;margin:12px 0 20px}
+.start-link {display:inline-block;color:var(--teal)!important;font-size:14px;font-weight:650;text-decoration:none;margin:0 0 18px}
+#research-start {scroll-margin-top:80px}
+.status-strip {font-size:11px;color:#44606c;letter-spacing:.05em;padding:13px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:0 0 24px;line-height:1.9}
+[data-testid="stMetric"] {background:#fff;padding:20px;border:1px solid var(--line);border-top:3px solid var(--teal);border-radius:8px}
+[data-testid="stMetricValue"] {font-variant-numeric:tabular-nums;letter-spacing:-.035em}
+[data-testid="stMetricDelta"] {color:#425d69}
+[data-testid="stSidebar"] {background:#eaf0ef;border-right:1px solid var(--line)}
+.journey {display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:18px 0 28px}
+.journey div {padding:16px 0;border-top:1px solid #bfd0d0;display:flex;flex-direction:column;gap:6px}
+.journey span {color:var(--teal);font-size:11px;font-weight:700;letter-spacing:.07em}
+.journey strong {font-size:16px;font-weight:650}
+.journey small {color:var(--muted);font-size:12px}
+button:focus-visible,a:focus-visible {outline:3px solid #009e91!important;outline-offset:3px}
+[role="tablist"] {gap:12px;border-bottom:1px solid var(--line)}
+[role="tab"] {white-space:normal;min-height:48px;height:auto;padding:10px 12px}
+@media(max-width:700px) {
+ .block-container {padding:1.5rem 1rem 3rem}
+ .journey {grid-template-columns:1fr;gap:0;margin-bottom:16px}
+ .journey div {padding:10px 0}
+ .hero-note {font-size:16px}
+ [data-testid="stMetric"] {padding:14px}
+ [role="tablist"] {gap:0}
+ [role="tab"] {font-size:12px;padding:8px}
+}
+</style>

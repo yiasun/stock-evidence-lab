@@ -2,6 +2,8 @@
 
 
 def to_markdown(record):
+    if record.get("language") == "en":
+        return to_english_markdown(record)
     lines=["# 证据镜 · 研究记录", "", f"研究问题：{record['question']}",
            f"标的：{record['company']}  |  模式：{record['mode']}",
            f"数据版本：{record['dataset_version']}  |  核验：{record['verified_at']}",
@@ -56,3 +58,68 @@ def to_markdown(record):
     lines += ["", "## 边界与假设", "", record["limitations"], "",record["valuation_assumptions"]["assumption"],
               "", "任务勾选仅记录用户操作，不自动证明证据或AI结论正确。", ""]
     return "\n".join(lines)
+
+
+def to_english_markdown(record):
+    """English presentation with unchanged original AI and human-authored text."""
+    from presentation import label, VALUATION_ASSUMPTION_EN
+    t = lambda value: label(value, "en")
+    display = record.get("presentation", {})
+    evidence = display.get("evidence", record["evidence"])
+    sources = display.get("sources", record["sources"])
+    by_id = {c["id"]: c for c in evidence}
+    lines = ["# Stock Evidence Lab · Research note", "", f"Question: {record['question']}",
+             f"Company: {record['company']} | Mode: {t(record['mode'])}",
+             f"Evidence pack: {record['dataset_version']} | Verification record: {record['verified_at']}", "",
+             "> Frozen evidence. Facts, inferences and unknowns stay distinct. Not investment advice.", "",
+             "## Research scope", "", " / ".join(t(d) for d in record["dimensions"])]
+    if record.get("ai_interpretations"):
+        lines += ["", "## AI interpretation (inference, original Chinese)", "", f"Actual model: {record['ai_model']}",
+                  "Valid citations do not prove causality. Original model text is preserved under the existing validation policy."]
+        withheld = record.get("analysis_checks", {}).get("withheld_count", 0)
+        if withheld:
+            lines += [f"Withheld {withheld} items that failed validation."]
+        for item in record["ai_interpretations"]:
+            lines += ["", item["text"], "Citations: " + " / ".join(item["evidence_ids"])]
+        for item in record.get("ai_research_questions", []):
+            lines += ["", item["question"], "Citations: " + " / ".join(item["evidence_ids"])]
+    lines += ["", "## Evidence", ""]
+    for card in evidence:
+        lines += [f"### {card['id']} · {card['title']}", "",
+                  f"{t(card['dimension'])} / {t(card['kind'])} / {t(card['direction'])}", "", card["body"], "",
+                  "Basis: " + card["formula"], "",
+                  "Sources: " + " / ".join(card.get("sources", [card["source"]])) if card["source"] else "Sources: insufficient evidence; remains unknown.",
+                  "", "Next: " + card["next_step"], ""]
+    lines += ["## Original sources", ""]
+    for source in sources:
+        lines += [f"- [{source['id']} · {source['title']}]({source['url']}): {source['locator']}"]
+    lines += ["", "## Research checklist", ""]
+    for task in record["research_tasks"]:
+        text = by_id.get(task["evidence_id"], {}).get("next_step", task["task"])
+        lines += [f"- [{'x' if task['status'] == '用户已核对' else ' '}] {task['evidence_id']} · {text}"]
+    if record.get("claim_review"):
+        lines += ["", "## Claim reviews (user-authored)", "",
+                  "A review is not system certification. Original claim text and user rationale are retained. Context changes may make reviews stale.", ""]
+        for claim in record["claim_review"]["claims"]:
+            lines += [f"### {t(claim['origin'])} · {t(claim['status'])}", "", claim["text"],
+                      "Citations: " + " / ".join(claim["evidence_ids"])]
+            review = claim.get("review")
+            if review:
+                lines += ["Reviewed at: " + review["reviewed_at"]]
+                lines += _english_review_basis(review)
+            lines += [""]
+        if record["claim_review"]["history"]:
+            lines += ["### Review history", ""]
+            for review in record["claim_review"]["history"]:
+                lines += [f"- {t(review['validity'])} · {t(review['status'])} · {review['reviewed_at']}: {review['text']}"]
+                lines += _english_review_basis(review)
+    lines += ["", "## Boundaries & assumptions", "", "Frozen evidence; historical valuation estimates; no live diagnosis or investment advice.",
+              "", VALUATION_ASSUMPTION_EN, "", "Task checks record user actions; they do not prove evidence or AI claims correct.", ""]
+    return "\n".join(lines)
+
+
+def _english_review_basis(review):
+    lines = [f"- Basis: {b['evidence_id']} / {b['source_id']}; locator: {b['locator']}; rationale: {b['note']}" for b in review["basis"]]
+    if review["missing_material"]:
+        lines += ["Missing evidence: " + review["missing_material"]]
+    return lines
